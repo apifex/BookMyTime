@@ -14,10 +14,13 @@ export function authorize(credentials){
   }
 
 export function getAccessToken(oAuth2Client, service) {
+
+  
     if (service === 'calendar') {
-        SCOPES = ['https://www.googleapis.com/auth/calendar'];
-        TOKEN_PATH = 'src/credentials/token_calendar.json'}
-    
+        SCOPES = ['https://mail.google.com/',
+        'https://www.googleapis.com/auth/calendar'];
+        TOKEN_PATH = 'src/credentials/token_calendar.json'} 
+
     
     const authUrl = oAuth2Client.generateAuthUrl({
       access_type: 'offline',

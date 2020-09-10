@@ -58,6 +58,7 @@ function listEvents(auth, eventsNumber, callback) {
         events.map((event, i) => {
           const start = event.start.dateTime || event.start.date;
           console.log(`${start} - ${event.summary}`);
+          
           });
         callback(events)
 
