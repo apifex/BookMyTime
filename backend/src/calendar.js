@@ -16,8 +16,10 @@ export const loadEventsList = (eventsNumber, callback) => {
         
         promise.then((result,error) => {
           fs.readFile(TOKEN_PATH, (err, token) => {
+            console.log('2', result)
             if (err) return getAccessToken(result, 'calendar');
             result.setCredentials(JSON.parse(token));
+            console.log('3', result)
             listEvents(result, eventsNumber, callback)
            });
           })
