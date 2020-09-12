@@ -13,7 +13,7 @@ export function authorize(credentials){
     return oAuth2Client
   }
 
-export function getAccessToken(oAuth2Client, service) {
+export function getNewAccessToken(oAuth2Client, service) {
 
   
     if (service === 'calendar') {

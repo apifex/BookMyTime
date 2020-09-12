@@ -3,7 +3,7 @@ import cors from 'cors';
 import express from 'express';
 
 import { sendMail } from './mailer';
-import { loadEventsList, addEvent } from  './calendar'
+import { loadEventsList, createEvent, freeBusy } from  './calendar'
 
 const port = process.env.PORT || 4000;
 const app = express();
@@ -12,23 +12,23 @@ app.use(express.json());
 
 app.use(cors())
 
-app.get('/message', (req, res) => {
-    res.send({data: 'i jest ok'})
-})
 
-app.get('/events', (req, res)=>{
+app.get('/upcommingevents', (req, res)=>{
     if (req.body.value && req.body.value>0) {
     loadEventsList(req.body.value, (events)=> {
-      let list = []
-      events.map((event) => list.push(event.summary))
-      res.send(list)
+      if (events) {
+        let list = []
+        events.map((event) => list.push(event.summary))
+        res.send(list)
+      } else res.send('No upcomming events')
     })
   }
 })
 
-app.post('/update', (req, res) =>{
-  console.log(req.body),
-    res.send('ok')
+app.get('/freebusy', (req, res)=>{
+  freeBusy(req.body.timeMin, req.body.timeMax, (busy)=>{
+    res.send(busy)
+  })
 })
 
 
@@ -61,10 +61,11 @@ app.post('/update', (req, res) =>{
 // };
 
 
-
-app.post('/addevent', (req, res) =>{
-  addEvent(req.body, () => console.log('event added'));
-  res.send('event added')
+app.post('/createevent', (req, res) =>{
+  createEvent(req.body, (createdAt) => {
+    console.log('event created at ',createdAt);
+    res.send(`event created at ${createdAt}` )
+  }); 
 })
 
 // PATTERT FOR MAIL 
