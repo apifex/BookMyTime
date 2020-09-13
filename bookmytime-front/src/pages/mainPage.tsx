@@ -1,11 +1,18 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
 import {Calendar} from '../components/calendar'
-const MainPage = ():ReactElement => {
+import {Day} from '../components/day/day'
+
+
+const MainPage = () => {
 
     return(
         <div>
-            <Calendar />
             <h1>Book My Time</h1>
+
+            <Calendar />
+            <Day />
+            
+            
         </div>
         
     )
