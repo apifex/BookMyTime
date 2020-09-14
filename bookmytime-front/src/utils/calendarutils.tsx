@@ -55,7 +55,7 @@ export const dayCalendar = async (day: string) => {
     ]
     
     const checkBusy = async (day:string) => {
-        // console.log('hello')
+                
         let dayToCheck = 
             {
                 "timeMin": `${day}T08:00:00+02:00`,
@@ -75,7 +75,7 @@ export const dayCalendar = async (day: string) => {
     const busy = await checkBusy(day)
 
     for (let i = 0; i<busy.length; i++) {
-        console.log(busy)
+        
         let busyevent = busy[i]
         for (let k = 0; k<periodsForMeeting.length; k++){
             let timeformeet = periodsForMeeting[k]
@@ -85,5 +85,5 @@ export const dayCalendar = async (day: string) => {
         }
     }
     // console.log(periodsForMeeting)
-    return periodsForMeeting    
+    return {day: periodsForMeeting} 
 }

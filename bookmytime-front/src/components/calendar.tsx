@@ -32,10 +32,10 @@ const daysofmonth = (date: Date) => {
     monthDaysToDisplay.push(<div key={firstDay?.toString()} id={firstDay?.toString()} className={classForfirstDayinMonth} onClick={handleClick}>{firstDay?.getDate()}</div>)
     monthDays.map((day)=>monthDaysToDisplay.push(<div key={day.toString()} id={day.toString()} className="day" onClick={handleClick}>{day.getDate()}</div>))
     monthDays.unshift(firstDay?firstDay:new Date())
-return {monthDaysToDisplay, monthDays}
+  return {monthDaysToDisplay, monthDays}
 }
 
-export const Calendar = () => {
+export const Calendar = (props:any) => {
     const today: Date = new Date();
 
     const [actualM, setMonth] = useState(today.getMonth())
@@ -46,7 +46,7 @@ export const Calendar = () => {
     let actualMonth = daysofmonth(new Date(today.getFullYear(), actualM, 1))
     let nextMonth = daysofmonth(new Date(today.getFullYear(), actualM+1, 1))
 
-    
+
     return (
     <div>
         <div>

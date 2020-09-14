@@ -1,6 +1,6 @@
 import React from 'react';
 import {Calendar} from '../components/calendar'
-import {Day} from '../components/day/day'
+import Day from '../components/day/day'
 
 
 const MainPage = () => {
