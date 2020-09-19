@@ -1,0 +1,61 @@
+.calendarMonth {
+    margin: 5px;
+    display: grid;
+    grid-template-columns: 80px 80px 80px 80px 80px 80px 80px;
+    grid-template-rows: 40px 50px 50px 50px 50px 50px;
+    grid-gap: 5px;
+    background-color: #fff;
+    color: #444;
+  }
+  
+  .day {
+    background-color: rgb(193, 230, 255);
+    color: rgb(0, 0, 0);
+    border-radius: 5px;
+    padding: 20px;
+    
+  }
+
+  .busy {
+   background-color: red; 
+  }
+
+  .legend {
+    background-color: rgb(196, 197, 197);
+    color: rgb(0, 0, 0);
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 0.8rem;
+  }
+
+  .otherMonth{
+    color: rgb(104, 102, 102);
+      background-color: rgb(159, 183, 199);;
+  }
+
+  .Monday {
+    grid-column-start: 1;
+  }
+
+  .Tuesday {
+    grid-column-start: 2;
+  }
+  .Wednesday {
+    grid-column-start: 3;
+  }
+
+  .Thursday {
+    grid-column-start: 4;
+  }
+
+  .Friday {
+    grid-column-start: 5;
+  }
+
+  .Saturday {
+    grid-column-start: 6;
+  }
+
+  .Sunday {
+    grid-column-start: 7;
+  }

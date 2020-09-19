@@ -1,7 +1,6 @@
-export const dayCalendar = async (day: string) => {
+const oneDayPlanning = async (day: string) => {
 
-
-    const periodsForMeeting = [
+       const periodsForMeeting = [
         {
             "start": `${day}T08:00:00+02:00`,
             "end": `${day}T08:55:00+02:00`,
@@ -84,6 +83,8 @@ export const dayCalendar = async (day: string) => {
             if (timeformeet.end>busyevent.start && timeformeet.end<busyevent.end) timeformeet.availble = false
         }
     }
-    // console.log(periodsForMeeting)
+    
     return {day: periodsForMeeting} 
 }
+
+export default oneDayPlanning

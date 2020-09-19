@@ -1,5 +1,5 @@
 import React from 'react';
-import {dayCalendar} from '../../utils/calendarutils';
+import oneDayPlanning from '../../utils/onedayplanning';
 import './day.scss'
 
 class Day extends React.Component {
@@ -11,8 +11,9 @@ state = {data: [{
 
 
 async componentDidMount () {
-    const data = await dayCalendar('2020-09-14')
+    const data = await oneDayPlanning('2020-09-18')
     this.setState({data: data.day})
+    
 }
 
 
