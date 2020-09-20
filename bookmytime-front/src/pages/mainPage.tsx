@@ -1,9 +1,9 @@
-
 import React from 'react';
-import Calendar from '../components/calendar/calendar'
+// import Calendar from '../components/calendar/calendar'
 import Day from '../components/day/day'
 
-import Month from '../components/Month/month'
+// import Month from '../components/Month/month'
+import Monthx from '../components/Month/monthx'
 
 interface IProps {
 }
@@ -28,7 +28,9 @@ render() {
     return(
         <div>
             <h1>Book My Time</h1>
-            <Month today = {this.state.today}/>
+            <Monthx today = {this.state.today}/>
+            {/* <Month today = {this.state.today}/> */}
+
             {/* <Calendar today = {this.state.today}/> */}
             <Day />
             

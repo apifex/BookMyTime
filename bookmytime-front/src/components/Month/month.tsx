@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 
 import './month.styles.scss'
 import oneDayPlanning from '../../utils/onedayplanning';
@@ -21,6 +21,7 @@ class Month extends React.Component<IProps, IState> {
             classForDay: ['0'],
             daysInMonth: []
         }
+        
     }
 
     componentDidMount() {
@@ -38,9 +39,10 @@ class Month extends React.Component<IProps, IState> {
         }
         const x = calculateDaysInMonth(this.props.today)
         this.setState({daysInMonth: x })
-        
-        let busyDays: Array<string> = []
-        x.forEach(async day=> {
+    
+        let availbleDays: Array<string> = []
+        const checkForAvailble = async () => {
+        for(const day of x) {
             let dayForDate: string
             if (day.getDate()>9) {dayForDate = day.getDate().toString()} else {dayForDate = `0${day.getDate()}`}
             let monthForDate
@@ -48,16 +50,17 @@ class Month extends React.Component<IProps, IState> {
             let dateISO = `${day.getFullYear()}-${monthForDate}-${dayForDate}`
             
             let result = await oneDayPlanning(dateISO)
-            let x = result.day.find((day)=> day.availble===false)
+            let x = result.day.find((day)=> day.availble===true)
             
             if (x) {
-                busyDays.push(dayForDate)
-                
-                this.setState({classForDay: [...this.state.classForDay, dayForDate]})
+                availbleDays.push(dayForDate)      
             }
-            
-        // this.setState({classForDay: busyDays})
-         })}
+         }
+         this.setState({classForDay: availbleDays})
+        }
+        checkForAvailble()
+         
+        }
     
     render() {
     
@@ -75,17 +78,21 @@ class Month extends React.Component<IProps, IState> {
                             id={firstDay?.toString()} 
                             className={this.state.classForDay.find(
                                 el=> el==='01')
-                                ?classForfirstDayinMonth +' busy':classForfirstDayinMonth}>
+                                ?classForfirstDayinMonth:classForfirstDayinMonth +' busy'}>
                                 {firstDay?.getDate()}
                         </div>)
-    this.state.daysInMonth.map((day)=>daysToDisplay.push(  <div key={day.toString()} 
+    this.state.daysInMonth.map((day)=>{
+        let dayClass: string
+        if (day.getDate()>9) {dayClass = day.getDate().toString()} else {dayClass = `0${day.getDate()}`}
+        daysToDisplay.push(<div key={day.toString()} 
                                                     id={day.toString()} 
                                                     className={
                                                         this.state.classForDay.find(
-                                                            el=> el===day.getDate().toString())
-                                                            ?'day busy':'day'}>
+                                                            el=> el===dayClass)
+                                                            ?'day':'day busy'}>
                                                     {day.getDate()}
-                                                </div>))
+                                                </div>)
+                                                return null})
     this.state.daysInMonth.unshift(firstDay?firstDay:new Date())
     
     return(

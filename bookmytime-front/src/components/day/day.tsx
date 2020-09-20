@@ -3,7 +3,8 @@ import oneDayPlanning from '../../utils/onedayplanning';
 import './day.scss'
 
 class Day extends React.Component {
-state = {data: [{
+
+    state = {data: [{
     "start": `2020-09-01T08:00:00+02:00`,
     "end": `2020-09-01T08:55:00+02:00`,
     availble: true,
