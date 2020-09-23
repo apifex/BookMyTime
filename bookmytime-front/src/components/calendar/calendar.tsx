@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './calendar.scss';
 
-import Month from '../Month/month'
+import Month from '../Month/month-class'
 
 import oneDayPlanning from '../../utils/onedayplanning';
 

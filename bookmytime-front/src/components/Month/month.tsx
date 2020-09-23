@@ -1,33 +1,23 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 
 import './month.styles.scss'
-import oneDayPlanning from '../../utils/onedayplanning';
+import Day from '../day/day'
 
 interface IProps{
     today: Date
 }
 
-interface IState{
-    classForDay: Array<string>;
-    daysInMonth: Array<Date>;
-}
+const Month = (props: IProps) => {
+    const today = props.today
+    const [actualMonth, setActualMonth] = useState([today])
+    const [busyHours, setBusyHours] = useState([[{start: 'string', end:'string', availble: true}]])
+   
+    const [dayPosition, setDayPosition] = useState([0,0])
+    
 
-
-
-class Month extends React.Component<IProps, IState> {
-    constructor(props:IProps){
-        super(props)
-        this.state = {
-            classForDay: ['0'],
-            daysInMonth: []
-        }
-        
-    }
-
-    componentDidMount() {
-        function calculateDaysInMonth (date: Date):Array<Date> {
+    useEffect(()=>{
+        const calculateDaysInMonth = (date: Date):Array<Date> => {
             const daysInMonth: Array<Date> = [];
-               
             const lastDayinMonth: number = new Date(date.getFullYear(), date.getMonth()+1,0).getDate()
             for (let i=0; i<lastDayinMonth; i++) {
                 let y: number = date.getFullYear()
@@ -37,71 +27,167 @@ class Month extends React.Component<IProps, IState> {
             }
             return daysInMonth
         }
-        const x = calculateDaysInMonth(this.props.today)
-        this.setState({daysInMonth: x })
+        setActualMonth(calculateDaysInMonth(today))
     
-        let availbleDays: Array<string> = []
-        const checkForAvailble = async () => {
-        for(const day of x) {
-            let dayForDate: string
-            if (day.getDate()>9) {dayForDate = day.getDate().toString()} else {dayForDate = `0${day.getDate()}`}
-            let monthForDate
-            if (day.getMonth()>8) {monthForDate = day.getMonth()+1} else {monthForDate = `0${day.getMonth()+1}`}
-            let dateISO = `${day.getFullYear()}-${monthForDate}-${dayForDate}`
-            
-            let result = await oneDayPlanning(dateISO)
-            let x = result.day.find((day)=> day.availble===true)
-            
-            if (x) {
-                availbleDays.push(dayForDate)      
-            }
-         }
-         this.setState({classForDay: availbleDays})
-        }
-        checkForAvailble()
-         
-        }
-    
-    render() {
-    
-    console.log('render')
-    const days: Array<string> = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-    const daysNames: Array<string> = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-    
-    const classForfirstDayinMonth: string = 'day ' + daysNames[new Date(this.props.today.getFullYear(), this.props.today.getMonth(), 1).getDay()]
-        
-    const daysToDisplay = [];
+    },[today]);
 
     
-    let firstDay = this.state.daysInMonth.shift()
+    useEffect(()=>{
+        const checkBusy = async () => {    
+            let monthToCheck =
+                {
+                    "timeMin": `${actualMonth[0].toISOString()}`,
+                    "timeMax": `${actualMonth[actualMonth.length-1].toISOString()}`
+                }
+            const response = await fetch ('http://localhost:4000/freebusy', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify(monthToCheck)
+              });
+              const result = await response.json()
+              const busy:any = []
+              actualMonth.forEach(day=>{
+                let dayForDate: string
+                if (day.getDate()>9) {dayForDate = day.getDate().toString()} else {dayForDate = `0${day.getDate()}`}
+                let monthForDate
+                if (day.getMonth()>8) {monthForDate = day.getMonth()+1} else {monthForDate = `0${day.getMonth()+1}`}
+                let dateISO = `${day.getFullYear()}-${monthForDate}-${dayForDate}`
+                busy.push(checkLocaly(result, dateISO))
+              })
+              setBusyHours(busy)       
+        }
+
+        const checkLocaly = (busy:any, day:string) => {
+            const periodsForMeeting = [
+                {
+                    "start": `${day}T08:00:00+02:00`,
+                    "end": `${day}T08:55:00+02:00`,
+                    availble: true,
+                },
+                {
+                    "start": `${day}T09:00:00+02:00`,
+                    "end": `${day}T09:55:00+02:00`,
+                    availble: true,
+                },
+                {
+                    "start": `${day}T10:00:00+02:00`,
+                    "end": `${day}T10:55:00+02:00`,
+                    availble: true,
+                },
+                {
+                    "start": `${day}T11:00:00+02:00`,
+                    "end": `${day}T11:55:00+02:00`,
+                    availble: true,
+                },
+                {
+                    "start": `${day}T12:00:00+02:00`,
+                    "end": `${day}T12:55:00+02:00`,
+                    availble: true,
+                },
+                {
+                    "start": `${day}T13:00:00+02:00`,
+                    "end": `${day}T13:55:00+02:00`,
+                    availble: true,
+                },
+                {
+                    "start": `${day}T14:00:00+02:00`,
+                    "end": `${day}T14:55:00+02:00`,
+                    availble: true,
+                },
+                {
+                    "start": `${day}T15:00:00+02:00`,
+                    "end": `${day}T15:55:00+02:00`,
+                    availble: true,
+                },
+                {
+                    "start": `${day}T16:00:00+02:00`,
+                    "end": `${day}T16:55:00+02:00`,
+                    availble: true,
+                },
+                {
+                    "start": `${day}T17:00:00+02:00`,
+                    "end": `${day}T17:55:00+02:00`,
+                    availble: true,
+                },
+            ]
+            for (let i = 0; i<busy.length; i++) {
+                let busyevent = busy[i]
+                for (let k = 0; k<periodsForMeeting.length; k++){
+                    let timeformeet = periodsForMeeting[k]
+                    if (busyevent.start>=timeformeet.start && busyevent.end<=timeformeet.end) timeformeet.availble = false
+                    if (timeformeet.start>=busyevent.start && timeformeet.end<=busyevent.end) timeformeet.availble = false
+                    if (timeformeet.end>busyevent.start && timeformeet.end<busyevent.end) timeformeet.availble = false
+                }
+            }
+            return periodsForMeeting
+        }
+       checkBusy()
+    }, [actualMonth])
+    
+    const handleClick = (e:any) => {
+        console.log(e.target.getBoundingClientRect().x,
+        e.target.getBoundingClientRect().y
+        )
+        setDayPosition([e.target.getBoundingClientRect().x,
+            e.target.getBoundingClientRect().y])
+        
+    }
+
+
+    
+    const days: Array<string> = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    // const daysNames: Array<string> = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    let dayx
+    if (actualMonth[0].getDay()-1>=0) {dayx = actualMonth[0].getDay()-1} else dayx = 6
+    const classForfirstDayinMonth: string = 'day ' + days[dayx]
+        
+    const daysToDisplay = [];
+    
+    let busyFirst = 'busy'
+    for (let i = 0; i<10; i++) {
+        if (busyHours[0][i].availble) {busyFirst = ''; i = 10}
+    }
+    
+    let firstDay = actualMonth.shift()
     daysToDisplay.push(<div key={'firstDay'} 
                             id={firstDay?.toString()} 
-                            className={this.state.classForDay.find(
-                                el=> el==='01')
-                                ?classForfirstDayinMonth:classForfirstDayinMonth +' busy'}>
-                                {firstDay?.getDate()}
+                            className={`${classForfirstDayinMonth} ${busyFirst}`}>
+                            {firstDay?.getDate()}
                         </div>)
-    this.state.daysInMonth.map((day)=>{
-        let dayClass: string
-        if (day.getDate()>9) {dayClass = day.getDate().toString()} else {dayClass = `0${day.getDate()}`}
+    
+    actualMonth.map((day)=>{
+        let busy = true
+        if (busyHours.length === actualMonth.length+1) {
+        for (let i = 0; i<10; i++) {
+            if (busyHours[day.getDate()-1][i].availble) {busy = false; i = 10}
+        }}
+        
         daysToDisplay.push(<div key={day.toString()} 
-                                                    id={day.toString()} 
-                                                    className={
-                                                        this.state.classForDay.find(
-                                                            el=> el===dayClass)
-                                                            ?'day':'day busy'}>
-                                                    {day.getDate()}
-                                                </div>)
-                                                return null})
-    this.state.daysInMonth.unshift(firstDay?firstDay:new Date())
+                                
+                                id={day.toString()} 
+                                className={busy?'day busy':'day'}
+                                onClick={handleClick}>
+                                {day.getDate()}
+                            </div>)
+                            return null})
+
+    actualMonth.unshift(firstDay?firstDay:new Date())
+    
     
     return(
         <div className="calendarMonth">
-            {days.map((day)=><div key={day} className='legend'>{day}</div>)}
+            {days.map((day)=><div
+                key={day} 
+                className='legend'>{day}</div>)}
             {daysToDisplay.map(day=>day)}
+            <Day dayPosition={dayPosition} />
         </div>
     )
-    }
+
+
+
 }
 
 
