@@ -11,10 +11,11 @@ const Month = (props: IProps) => {
     const today = props.today
     const [actualMonth, setActualMonth] = useState([today])
     const [busyHours, setBusyHours] = useState([[{start: 'string', end:'string', availble: true}]])
-   
     const [dayPosition, setDayPosition] = useState([0,0])
+    const [dayVisibility, setDayVisibilite] = useState(false)
+    const [dayToDisplay, setDayToDisplay] = useState(today)
+    const [clickDate, setClickDate] = useState(null)
     
-
     useEffect(()=>{
         const calculateDaysInMonth = (date: Date):Array<Date> => {
             const daysInMonth: Array<Date> = [];
@@ -31,8 +32,8 @@ const Month = (props: IProps) => {
     
     },[today]);
 
-    
     useEffect(()=>{
+        if (actualMonth.length<2) return
         const checkBusy = async () => {    
             let monthToCheck =
                 {
@@ -56,7 +57,7 @@ const Month = (props: IProps) => {
                 let dateISO = `${day.getFullYear()}-${monthForDate}-${dayForDate}`
                 busy.push(checkLocaly(result, dateISO))
               })
-              setBusyHours(busy)       
+              setBusyHours(busy)
         }
 
         const checkLocaly = (busy:any, day:string) => {
@@ -127,18 +128,19 @@ const Month = (props: IProps) => {
     }, [actualMonth])
     
     const handleClick = (e:any) => {
-        console.log(e.target.getBoundingClientRect().x,
-        e.target.getBoundingClientRect().y
-        )
-        setDayPosition([e.target.getBoundingClientRect().x,
-            e.target.getBoundingClientRect().y])
+        setDayPosition([e.clientX, e.clientY]);
+        if (clickDate===null||clickDate===e.target.id) {
+            setDayVisibilite(!dayVisibility)
+        }
+        
+        setDayToDisplay(new Date(e.target.id))
+        setClickDate(e.target.id)
         
     }
 
 
     
     const days: Array<string> = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-    // const daysNames: Array<string> = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
     let dayx
     if (actualMonth[0].getDay()-1>=0) {dayx = actualMonth[0].getDay()-1} else dayx = 6
     const classForfirstDayinMonth: string = 'day ' + days[dayx]
@@ -153,11 +155,13 @@ const Month = (props: IProps) => {
     let firstDay = actualMonth.shift()
     daysToDisplay.push(<div key={'firstDay'} 
                             id={firstDay?.toString()} 
-                            className={`${classForfirstDayinMonth} ${busyFirst}`}>
+                            className={`${classForfirstDayinMonth} ${busyFirst}`}
+                            onClick={handleClick}>
                             {firstDay?.getDate()}
                         </div>)
     
     actualMonth.map((day)=>{
+        
         let busy = true
         if (busyHours.length === actualMonth.length+1) {
         for (let i = 0; i<10; i++) {
@@ -165,8 +169,7 @@ const Month = (props: IProps) => {
         }}
         
         daysToDisplay.push(<div key={day.toString()} 
-                                
-                                id={day.toString()} 
+                                id={day.toUTCString()}
                                 className={busy?'day busy':'day'}
                                 onClick={handleClick}>
                                 {day.getDate()}
@@ -177,17 +180,15 @@ const Month = (props: IProps) => {
     
     
     return(
+        
         <div className="calendarMonth">
             {days.map((day)=><div
                 key={day} 
                 className='legend'>{day}</div>)}
             {daysToDisplay.map(day=>day)}
-            <Day dayPosition={dayPosition} />
+            <Day dayPosition={dayPosition} dayVisibility={dayVisibility} dayToDisplay={dayToDisplay} />
         </div>
     )
-
-
-
 }
 
 

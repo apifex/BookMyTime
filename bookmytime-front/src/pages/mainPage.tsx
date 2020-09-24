@@ -1,8 +1,8 @@
 import React from 'react';
 // import Calendar from '../components/calendar/calendar'
-import Day from '../components/day/day'
 
-// import Month from '../components/Month/month'
+
+
 import Month from '../components/Month/month'
 
 interface IProps {
