@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 
 
-// import oneDayPlanning from '../../utils/onedayplanning';
+import Booking from '../booking/Booking'
 import './day.scss'
 
 interface IProps {
@@ -11,11 +11,14 @@ interface IProps {
     dayToDisplay: Date
 }
 
-const Day = (props:IProps) => {
+const Day = ({dayVisibility = false, ...props}:IProps) => {
     const date = props.dayToDisplay
+
+    const [bookingPosition, setBookingPosition] = useState([0,0])
+    const [bookingVisibility, setBookingVisibility] = useState(false)
     
 
-    const [dayT, setDayT] = useState([{
+    const [days, setDays] = useState([{
         "start":`2020-09-01T09:00:00+02:00`,
         "end": `2020-09-01T09:55:00+02:00`,
         availble: true,
@@ -42,8 +45,8 @@ const Day = (props:IProps) => {
                 body: JSON.stringify(dayToCheck)
               });
               const result = await response.json()
-              const d = checkLocaly(result, dateISO)
-              setDayT(d)       
+              const day = checkLocaly(result, dateISO)
+              setDays(day)       
         }
 
         const checkLocaly = (busy:any, day:string) => {
@@ -111,28 +114,48 @@ const Day = (props:IProps) => {
             return periodsForMeeting
         }
        checkBusy()
-    },[props.dayToDisplay])
+    },[date])
 
-
+    const handleClick = (e:any) => {
+        setBookingPosition([e.clientX, e.clientY]);
+        setBookingVisibility(!bookingVisibility)
+    }
     const DDy = styled.div`
     position: absolute;
     top: ${props.dayPosition[1]}px;
     left: ${props.dayPosition[0]}px;
-    background-color: rgba(0, 0, 0, 0.226);
+    background-color: #A8DADC;
+    width: 200px;
+    padding: 10px;
+    border-radius: 5px;
+    border-width: 1px;
+    border-style: solid; 
+    border-color: #457B9D;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     `
     
     return (
-    <DDy>
-    {props.dayVisibility?
+    
+    dayVisibility?
         <div>
-        {dayT.map(el => <div 
-        key={el.start} 
-        className={el.availble?'availble':'busy'}>
+        <DDy>
+        <div>
+        {days.map(el => <div 
+            key={el.start}
+            id={el.start}
+            onClick={handleClick}
+            className={el.availble?'availble':'busyday'}>
             {new Date(el.start).getHours()}:{new Date(el.start).getMinutes()} - {new Date(el.end).getHours()}:{new Date(el.end).getMinutes()}</div>)}    
-        </div>:
+        </div>
+        </DDy>
+        <div>
+        <Booking bookingPosition={bookingPosition} visibility={bookingVisibility}/>
+        </div>
+        </div>
+        :
         null
-    }
-    </DDy>
+    
+    
     )
 
 }

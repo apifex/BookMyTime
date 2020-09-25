@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react'
 import './month.styles.scss'
 import Day from '../day/day'
 
+
 interface IProps{
     today: Date
 }
@@ -156,7 +157,7 @@ const Month = (props: IProps) => {
     daysToDisplay.push(<div key={'firstDay'} 
                             id={firstDay?.toString()} 
                             className={`${classForfirstDayinMonth} ${busyFirst}`}
-                            onClick={handleClick}>
+                            onClick={busyFirst==='busy'?()=>{}:handleClick}>
                             {firstDay?.getDate()}
                         </div>)
     
@@ -167,13 +168,22 @@ const Month = (props: IProps) => {
         for (let i = 0; i<10; i++) {
             if (busyHours[day.getDate()-1][i].availble) {busy = false; i = 10}
         }}
+        if (day.getDay()>0 && day.getDay()<6) {
+            daysToDisplay.push(<div key={day.toString()} 
+            id={day.toUTCString()}
+            className={busy?'day busy':'day'}
+            onClick={busy?()=>{}:handleClick}>
+            {day.getDate()}
+            </div>)    
+        } else {
+            daysToDisplay.push(<div key={day.toString()} 
+            id={day.toUTCString()}
+            className={'day busy'}
+            >
+            {day.getDate()}
+            </div>)
+        }
         
-        daysToDisplay.push(<div key={day.toString()} 
-                                id={day.toUTCString()}
-                                className={busy?'day busy':'day'}
-                                onClick={handleClick}>
-                                {day.getDate()}
-                            </div>)
                             return null})
 
     actualMonth.unshift(firstDay?firstDay:new Date())

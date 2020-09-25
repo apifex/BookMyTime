@@ -1,13 +1,16 @@
-.dayx {
-    position: absolute;
-    
-    background-color: rgba(0, 0, 0, 0.226);
-}
+
 
 .availble {
-    background-color: rgba(55, 245, 55, 0.589);
+    background-color: #F1FAEE;
+    padding: 5px;
+    margin: 2px;
+    cursor: pointer;
 }
 
-.busy {
-    background-color: rgba(245, 68, 55, 0.589);
+.busyday {
+    background-color: #E42535;
+    color: #F1FAEE;
+    padding: 5px;
+    margin: 2px;
+    cursor: not-allowed;
 }
