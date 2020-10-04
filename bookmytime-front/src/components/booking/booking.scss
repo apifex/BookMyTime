@@ -1,0 +1,154 @@
+
+$primary: #111f99;
+$secondary: #38ef7d;
+$white: #fff;
+$gray: #9b9b9b;
+
+.modal {
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+    z-index: 1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+
+.input-group {
+  position: relative;
+  padding: 15px 0 0;
+  margin-top: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 10px;
+}
+
+.input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid $primary;
+  outline: 0;
+  font-size: 1.3rem;
+  color: $primary;
+  padding: 7px 0;
+  background: transparent;
+  transition: border-color 0.8s;
+
+  &::placeholder {
+    color: transparent;
+  }
+
+  &:placeholder-shown ~ .label {
+    font-size: 1rem;
+    cursor: text;
+    top: 20px;
+  }
+}
+
+.label {
+  position: absolute;
+  top: 0;
+  display: block;
+  transition: 0.8s;
+  font-size: 1rem;
+  color: $primary;
+}
+
+.input:focus {
+  ~ .label {
+    position: absolute;
+    top: 0;
+    display: block;
+    transition: 0.8s;
+    font-size: 1rem;
+    color: $primary;
+    // font-weight:700;    
+  }
+  padding-bottom: 6px;  
+//   font-weight: 700;
+  border-color: red;
+//   border-image: linear-gradient(to right, $primary,$secondary);
+  border-image-slice: 1;
+}
+/* reset input */
+.input{
+  &:required,&:invalid { box-shadow:none; }
+}
+.input-helper {
+    
+    color: rgb(247, 75, 75);
+}
+
+.booking-wraper{
+    margin: auto;
+    margin-top: 80px;
+    background-color: #A8DADC;
+    width: 40%;
+    padding: 10px;
+    border-radius: 5px;
+    border-width: 1px;
+    border-style: solid; 
+    border-color: #457B9D;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    
+
+}
+
+.booking-textArea{
+    background-color: #F1FAEE;
+    width: 80%;
+    height: 5rem;
+    resize: none;
+    padding: 5px;
+    margin: 10px;
+    border-radius: 5px;
+    border-width: 1px;
+    border-style: solid; 
+    border-color: #457B9D;
+}
+
+.booking-button {
+    border-radius: 10px;
+    border: 0;
+    color: #F1FAEE;
+    cursor: pointer;
+    display: inline-block;
+    
+    background-color: #E42535;
+    letter-spacing: 0.1em;
+    height: 2.85em;
+    line-height: 2.95em;
+    padding: 0 2em;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    margin: 5px;
+    &:hover {
+        filter: brightness(110%);
+        text-decoration: none;
+        outline: none
+    }
+    &:active {
+        filter: brightness(80%);
+        text-decoration: none;
+    }
+    &:focus {
+        outline: none
+    }
+}
+
+.cancel {
+    background-color: black;
+        &:hover {
+            background-color: #444;
+			filter: brightness(110%);
+			text-decoration: none;
+			outline: none
+		}
+		&:active {
+			filter: brightness(80%);
+			text-decoration: none;
+		}
+}

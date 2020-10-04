@@ -1,8 +1,7 @@
-import React, {useEffect, useState} from 'react'
-
+import React, {useContext, useEffect, useState} from 'react'
+import {DayContext} from '../../contexts/day-context'
+import {DayPositionContext} from '../../contexts/dayPosition-context'
 import './month.styles.scss'
-import Day from '../day/day'
-
 
 interface IProps{
     today: Date
@@ -12,11 +11,11 @@ const Month = (props: IProps) => {
     const today = props.today
     const [actualMonth, setActualMonth] = useState([today])
     const [busyHours, setBusyHours] = useState([[{start: 'string', end:'string', availble: true}]])
-    const [dayPosition, setDayPosition] = useState([0,0])
-    const [dayVisibility, setDayVisibilite] = useState(false)
-    const [dayToDisplay, setDayToDisplay] = useState(today)
-    const [clickDate, setClickDate] = useState(null)
-    
+    const dayContext = useContext(DayContext)?.dayContext
+    const setDayContext = useContext(DayContext)?.setDayContext
+    const setDayPositionContext = useContext(DayPositionContext)?.setDayPositionContext
+
+    console.log('log from month', dayContext)
     useEffect(()=>{
         const calculateDaysInMonth = (date: Date):Array<Date> => {
             const daysInMonth: Array<Date> = [];
@@ -30,7 +29,7 @@ const Month = (props: IProps) => {
             return daysInMonth
         }
         setActualMonth(calculateDaysInMonth(today))
-    
+        
     },[today]);
 
     useEffect(()=>{
@@ -56,7 +55,7 @@ const Month = (props: IProps) => {
                 let monthForDate
                 if (day.getMonth()>8) {monthForDate = day.getMonth()+1} else {monthForDate = `0${day.getMonth()+1}`}
                 let dateISO = `${day.getFullYear()}-${monthForDate}-${dayForDate}`
-                busy.push(checkLocaly(result, dateISO))
+                busy.push(checkLocaly(result, dateISO.toString()))
               })
               setBusyHours(busy)
         }
@@ -125,28 +124,22 @@ const Month = (props: IProps) => {
             }
             return periodsForMeeting
         }
-       checkBusy()
+       checkBusy() 
     }, [actualMonth])
     
     const handleClick = (e:any) => {
-        setDayPosition([e.clientX, e.clientY]);
-        if (clickDate===null||clickDate===e.target.id) {
-            setDayVisibilite(!dayVisibility)
-        }
-        
-        setDayToDisplay(new Date(e.target.id))
-        setClickDate(e.target.id)
-        
+        console.log('from month',[e.clientX, e.clientY]);
+        console.log('from month', e.target.id)
+        setDayContext({date: new Date(e.target.id), visible: true})
+        setDayPositionContext([e.clientX, e.clientY])
     }
-
-
     
     const days: Array<string> = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     let dayx
     if (actualMonth[0].getDay()-1>=0) {dayx = actualMonth[0].getDay()-1} else dayx = 6
     const classForfirstDayinMonth: string = 'day ' + days[dayx]
         
-    const daysToDisplay = [];
+    const daysToDisplay:Array<any> = [];
     
     let busyFirst = 'busy'
     for (let i = 0; i<10; i++) {
@@ -170,14 +163,14 @@ const Month = (props: IProps) => {
         }}
         if (day.getDay()>0 && day.getDay()<6) {
             daysToDisplay.push(<div key={day.toString()} 
-            id={day.toUTCString()}
+            id={day.toISOString()}
             className={busy?'day busy':'day'}
             onClick={busy?()=>{}:handleClick}>
             {day.getDate()}
             </div>)    
         } else {
             daysToDisplay.push(<div key={day.toString()} 
-            id={day.toUTCString()}
+            id={day.toISOString()}
             className={'day busy'}
             >
             {day.getDate()}
@@ -188,18 +181,14 @@ const Month = (props: IProps) => {
 
     actualMonth.unshift(firstDay?firstDay:new Date())
     
-    
     return(
-        
-        <div className="calendarMonth">
+            <div className="calendarMonth">
             {days.map((day)=><div
                 key={day} 
                 className='legend'>{day}</div>)}
-            {daysToDisplay.map(day=>day)}
-            <Day dayPosition={dayPosition} dayVisibility={dayVisibility} dayToDisplay={dayToDisplay} />
-        </div>
+                {daysToDisplay.map(day=>day)}
+            </div>   
     )
 }
-
 
 export default Month

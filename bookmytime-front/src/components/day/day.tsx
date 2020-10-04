@@ -1,23 +1,19 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import styled from 'styled-components';
 
 
 import Booking from '../booking/Booking'
 import './day.scss'
+import {DayContext} from '../../contexts/day-context'
+import {DayPositionContext} from '../../contexts/dayPosition-context'
 
-interface IProps {
-    dayPosition: Array<number>,
-    dayVisibility: boolean,
-    dayToDisplay: Date
-}
-
-const Day = ({dayVisibility = false, ...props}:IProps) => {
-    const date = props.dayToDisplay
-
-    const [bookingPosition, setBookingPosition] = useState([0,0])
-    const [bookingVisibility, setBookingVisibility] = useState(false)
+const Day = () => {
+    const date = useContext(DayContext)?.dayContext.date
+    const visible = useContext(DayContext)?.dayContext.visible
     
-
+    const [bookingVisibility, setBookingVisibility] = useState(false)
+    const [chosenHour, setChosenHour] = useState()
+    
     const [days, setDays] = useState([{
         "start":`2020-09-01T09:00:00+02:00`,
         "end": `2020-09-01T09:55:00+02:00`,
@@ -26,7 +22,9 @@ const Day = ({dayVisibility = false, ...props}:IProps) => {
     
     useEffect(()=>{
         
-        const checkBusy = async () => {    
+        const checkBusy = async () => { 
+            console.log('from day', date)
+            if (!date) return
             let dayForDate: string
                 if (date.getDate()>9) {dayForDate = date.getDate().toString()} else {dayForDate = `0${date.getDate()}`}
                 let monthForDate
@@ -115,15 +113,25 @@ const Day = ({dayVisibility = false, ...props}:IProps) => {
         }
        checkBusy()
     },[date])
-
+    
     const handleClick = (e:any) => {
-        setBookingPosition([e.clientX, e.clientY]);
-        setBookingVisibility(!bookingVisibility)
+        setBookingVisibility(!bookingVisibility);
+        setChosenHour(e.target.id)
+        
     }
-    const DDy = styled.div`
+
+    const closeBooking = () => {
+        setBookingVisibility(false)
+    }
+
+    let dayPosition = useContext(DayPositionContext)?.dayPositionContext || [0,0]
+    console.log('from day', dayPosition)
+    let top = dayPosition[1];
+    if (dayPosition[1]>300) top = dayPosition[1]-300
+    const DayStyled = styled.div`
     position: absolute;
-    top: ${props.dayPosition[1]}px;
-    left: ${props.dayPosition[0]}px;
+    top: ${top}px;
+    left: ${dayPosition[0]}px;
     background-color: #A8DADC;
     width: 200px;
     padding: 10px;
@@ -133,12 +141,10 @@ const Day = ({dayVisibility = false, ...props}:IProps) => {
     border-color: #457B9D;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     `
-    
     return (
-    
-    dayVisibility?
+        visible?(
         <div>
-        <DDy>
+        <DayStyled>
         <div>
         {days.map(el => <div 
             key={el.start}
@@ -147,13 +153,14 @@ const Day = ({dayVisibility = false, ...props}:IProps) => {
             className={el.availble?'availble':'busyday'}>
             {new Date(el.start).getHours()}:{new Date(el.start).getMinutes()} - {new Date(el.end).getHours()}:{new Date(el.end).getMinutes()}</div>)}    
         </div>
-        </DDy>
+        </DayStyled>
         <div>
-        <Booking bookingPosition={bookingPosition} visibility={bookingVisibility}/>
+    {bookingVisibility?
+        <Booking chosenHour={chosenHour} closeBooking={closeBooking}/>:null
+    }
         </div>
-        </div>
-        :
-        null
+        </div>): null
+        
     
     
     )
