@@ -4,33 +4,33 @@ import {DayPositionContext} from '../../contexts/dayPosition-context'
 import './month.styles.scss'
 
 interface IProps{
-    today: Date
+    month: {
+        m: number,
+        y: number
+    }
 }
 
-const Month = (props: IProps) => {
-    const today = props.today
-    const [actualMonth, setActualMonth] = useState([today])
+const Month = ({month}: IProps) => {
+    
+    const [actualMonth, setActualMonth] = useState([new Date()])
     const [busyHours, setBusyHours] = useState([[{start: 'string', end:'string', availble: true}]])
-    const dayContext = useContext(DayContext)?.dayContext
     const setDayContext = useContext(DayContext)?.setDayContext
+    const dayContext = useContext(DayContext)?.dayContext
     const setDayPositionContext = useContext(DayPositionContext)?.setDayPositionContext
 
-    console.log('log from month', dayContext)
     useEffect(()=>{
-        const calculateDaysInMonth = (date: Date):Array<Date> => {
+        const calculateDaysInMonth = ():Array<Date> => {
             const daysInMonth: Array<Date> = [];
-            const lastDayinMonth: number = new Date(date.getFullYear(), date.getMonth()+1,0).getDate()
+            const lastDayinMonth: number = new Date(month.y, month.m+1,0).getDate()
             for (let i=0; i<lastDayinMonth; i++) {
-                let y: number = date.getFullYear()
-                let m: number = date.getMonth();
                 let d: number = 1+i
-                daysInMonth.push(new Date(y,m,d))
+                daysInMonth.push(new Date(month.y,month.m,d))
             }
             return daysInMonth
         }
-        setActualMonth(calculateDaysInMonth(today))
+        setActualMonth(calculateDaysInMonth())
         
-    },[today]);
+    },[month]);
 
     useEffect(()=>{
         if (actualMonth.length<2) return
@@ -47,6 +47,7 @@ const Month = (props: IProps) => {
                 },
                 body: JSON.stringify(monthToCheck)
               });
+              
               const result = await response.json()
               const busy:any = []
               actualMonth.forEach(day=>{
@@ -128,10 +129,11 @@ const Month = (props: IProps) => {
     }, [actualMonth])
     
     const handleClick = (e:any) => {
-        console.log('from month',[e.clientX, e.clientY]);
-        console.log('from month', e.target.id)
-        setDayContext({date: new Date(e.target.id), visible: true})
-        setDayPositionContext([e.clientX, e.clientY])
+        if (dayContext?.date.toString()===new Date(e.target.id).toString()) {
+            return setDayContext({date: '', visible: false});
+        }
+        setDayContext({date: new Date(e.target.id), visible: true});
+        setDayPositionContext([e.clientX, e.clientY]);
     }
     
     const days: Array<string> = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -145,6 +147,7 @@ const Month = (props: IProps) => {
     for (let i = 0; i<10; i++) {
         if (busyHours[0][i].availble) {busyFirst = ''; i = 10}
     }
+    if (actualMonth[0].getDay()===0 || actualMonth[0].getDay()===6) busyFirst = 'busy'
     
     let firstDay = actualMonth.shift()
     daysToDisplay.push(<div key={'firstDay'} 
@@ -184,7 +187,7 @@ const Month = (props: IProps) => {
     return(
             <div className="calendarMonth">
             {days.map((day)=><div
-                key={day} 
+                key={day}
                 className='legend'>{day}</div>)}
                 {daysToDisplay.map(day=>day)}
             </div>   

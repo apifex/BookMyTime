@@ -1,8 +1,7 @@
 .calendar {
     margin: 5px;
     display: grid;
-
-    grid-template-columns: 550px;
+    grid-template-columns: auto 550px 550px;
     grid-gap: 5px;
     background-color: #fff;
     color: #444;
@@ -10,12 +9,22 @@
   }
   
   .grid-one {
-    grid-column-start: 1;
+    grid-column-start: 2;
   }
 
   .grid-two {
-    grid-column-start: 2;
+    grid-column-start: 3;
     
   }
+
+.previous {
+  color: rgb(115, 115, 241);
+  cursor: pointer;
+}
+
+.next {
+  color: rgb(115, 115, 241);
+  cursor: pointer;
+}
 
   
