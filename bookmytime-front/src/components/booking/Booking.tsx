@@ -1,7 +1,9 @@
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback, useContext } from 'react';
 import EmailValidator from 'email-validator';
 import './booking.scss';
+import {DayContext} from '../../contexts/day-context'
+
 
 
 const Booking = (props:any) => {
@@ -18,6 +20,7 @@ const Booking = (props:any) => {
     const [mailInputValue, setMailInputValue] = useState('')
     const [reasonValue, setReasonValue] = useState('')
 
+    const setDayContext = useContext(DayContext)?.setDayContext
 
 
     const handleConfirm = async () => {
@@ -84,7 +87,10 @@ const Booking = (props:any) => {
               })
               
             let responseMailer = await mailer.text()
-            console.log(responseMailer)
+            
+            handleCancel()
+            setDayContext({date: '', visible: false});
+            if (responseMailer==='email sent') alert('your meeting has been fixed, you will recive a confirmation mail')
     }
 
     useEffect(()=>{
@@ -102,10 +108,26 @@ const Booking = (props:any) => {
             nameInputRef.current.focus()}
     }, [nameError])
     
+    const handleCancel = useCallback(()=> 
+    {props.closeBooking()
+    }, [props])
+
+    const escFunction = useCallback((event) => {
+        event.stopPropagation()
+        if(event.keyCode === 27) {
+            handleCancel()
+        }
+      }, [handleCancel])
+
+    useEffect(() => {
+        document.addEventListener("keydown", escFunction, true);
+        
+        return () => {
+          document.removeEventListener("keydown", escFunction, true);
+        };
+      }, [escFunction]);
     
-    const handleCancel = () => {
-        props.closeBooking()
-    }
+    
     
     const handleNameInput = (e:any) => {
         setNameInputValue(e.target.value);

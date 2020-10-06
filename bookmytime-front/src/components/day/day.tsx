@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState, useCallback} from 'react';
 import styled from 'styled-components';
 
 
@@ -10,6 +10,7 @@ import {DayPositionContext} from '../../contexts/dayPosition-context'
 const Day = () => {
     const date = useContext(DayContext)?.dayContext.date
     const visible = useContext(DayContext)?.dayContext.visible
+    const setVisible = useContext(DayContext)?.setDayContext
     
     const [bookingVisibility, setBookingVisibility] = useState(false)
     const [chosenHour, setChosenHour] = useState()
@@ -23,13 +24,14 @@ const Day = () => {
     useEffect(()=>{
         
         const checkBusy = async () => { 
-            console.log('from day', date)
+            
             if (!date) return
             let dayForDate: string
                 if (date.getDate()>9) {dayForDate = date.getDate().toString()} else {dayForDate = `0${date.getDate()}`}
                 let monthForDate
                 if (date.getMonth()>8) {monthForDate = date.getMonth()+1} else {monthForDate = `0${date.getMonth()+1}`}
                 const dateISO = `${date.getFullYear()}-${monthForDate}-${dayForDate}`
+                
             let dayToCheck =
                 {
                     "timeMin": `${dateISO}T08:00:00+02:00`,
@@ -44,6 +46,7 @@ const Day = () => {
               });
               const result = await response.json()
               const day = checkLocaly(result, dateISO)
+              
               setDays(day)       
         }
 
@@ -113,6 +116,24 @@ const Day = () => {
         }
        checkBusy()
     },[date])
+
+    const handleClose = useCallback(() => 
+    {setVisible({date: '', visible: false})},[setVisible])
+    
+    const escFunction = useCallback((event) => {
+        event.stopPropagation()
+        if(event.keyCode === 27) {
+          handleClose()
+        }
+      }, [handleClose]);
+
+    useEffect(() => {
+        document.addEventListener("keydown", escFunction, false);
+
+        return () => {
+          document.removeEventListener("keydown", escFunction, false);
+        };
+      }, [escFunction]);
     
     const handleClick = (e:any) => {
         setBookingVisibility(!bookingVisibility);
@@ -125,13 +146,14 @@ const Day = () => {
     }
 
     let dayPosition = useContext(DayPositionContext)?.dayPositionContext || [0,0]
-    console.log('from day', dayPosition)
+    let left = dayPosition[0]
     let top = dayPosition[1];
     if (dayPosition[1]>300) top = dayPosition[1]-300
+    if (dayPosition[0]>700) left = dayPosition[0]-200
     const DayStyled = styled.div`
     position: absolute;
     top: ${top}px;
-    left: ${dayPosition[0]}px;
+    left: ${left}px;
     background-color: #A8DADC;
     width: 200px;
     padding: 10px;
@@ -141,10 +163,16 @@ const Day = () => {
     border-color: #457B9D;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     `
+    
+    
+
     return (
         visible?(
-        <div>
+        <div >
         <DayStyled>
+        
+        <div className='close' onClick={handleClose}>x</div>
+        <div className='day-header'>{date?.toDateString()}</div>
         <div>
         {days.map(el => <div 
             key={el.start}
