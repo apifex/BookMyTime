@@ -3,6 +3,7 @@ import {DayContext} from '../../contexts/day-context'
 import {DayPositionContext} from '../../contexts/dayPosition-context'
 import './month.styles.scss'
 
+
 interface IProps{
     month: {
         m: number,
