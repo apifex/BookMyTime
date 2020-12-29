@@ -2,89 +2,61 @@ import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
 
-import { sendMail } from './mailer';
-import { loadEventsList, createEvent, freeBusy } from  './calendar'
+import {createEvent, freeBusy, sendMail} from './googleapis';
 
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 5000;
 const app = express();
 
 app.use(express.json());
-
 app.use(cors())
 
-
-app.get('/upcommingevents', (req, res)=>{
-    if (req.body.value && req.body.value>0) {
-    loadEventsList(req.body.value, (events)=> {
-      if (events) {
-        let list = []
-        events.map((event) => list.push(event.summary))
-        res.send(list)
-      } else res.send('No upcomming events')
-    })
+app.post('/freebusy', async (req, res) =>{
+  try {
+    const busy = await freeBusy(req.body.timeMin, req.body.timeMax)
+    res.send(busy)
+  } catch (err) {
+    console.log("Error on server, when calling freebusy")
   }
 })
 
-app.get('/freebusy', (req, res)=>{
-  freeBusy(req.body.timeMin, req.body.timeMax, (busy)=>{
-    res.send(busy)
-  })
-})
-
-
 // PATTERN FOR EVENT 
-// var event = {
-//   'summary': 'Google I/O 2020',
-//   'location': '800 Howard St., San Francisco, CA 94103',
-//   'description': 'A chance to hear more about Google\'s developer products.',
+// let event = {
+//   'summary': 'event name',
+//   'description': 'some description',
 //   'start': {
-//     'dateTime': '2020-08-27T09:00:00-07:00',
-//     'timeZone': 'America/Los_Angeles',
+//     'dateTime': '2020-08-27T09:00:00-07:00'
 //   },
 //   'end': {
-//     'dateTime': '2020-08-27T17:00:00-07:00',
-//     'timeZone': 'America/Los_Angeles',
-//   },
-//   'recurrence': [
-//     'RRULE:FREQ=DAILY;COUNT=2'
-//   ],
-//   'attendees': [
-//     {'email': 'apifex@gmail.com'},
-//   ],
-//   'reminders': {
-//     'useDefault': false,
-//     'overrides': [
-//       {'method': 'email', 'minutes': 24 * 60},
-//       {'method': 'popup', 'minutes': 10},
-//     ],
-//   },
+//     'dateTime': '2020-08-27T17:00:00-07:00'
+//   }
 // };
 
 
-app.post('/createevent', (req, res) =>{
-  createEvent(req.body, (createdAt) => {
-    console.log('event created at ',createdAt);
-    res.send(`event created at ${createdAt}` )
-  }); 
+app.post('/createevent', async (req, res) =>{
+  try{
+    const response = await createEvent(req.body)
+    res.send(response)
+  } catch (err) {
+    console.log("error on server, when creating event", err)
+  }
 })
 
-// PATTERT FOR MAIL 
-// const mailOptions = {
-//   from: "pprzeb@gmail.com",
-//   to: "apifex@gmail.com",
-//   subject: "Node.js Email with Secure OAuth",
-//   generateTextFromHTML: true,
-//   html: "<b>hello johneeeee</b>"
-// };
+// PATTERN FOR MAIL
+// let mail = {
+//   'to': 'someadress@blabla.com',
+//   'from': 'myadresse@gmail.com',
+//   'subject': 'some subject'
+//   'message': 'some message'
+// }
 
-
-app.post('/sendmail', (req, res) =>{
-  console.log('email send'),
-  sendMail(req.body)
-  res.send('email sent')
+app.post('/sendmail', async (req, res) =>{
+  try{
+    const response = await sendMail(req.body)
+    res.send(response)
+  } catch(err) {
+    console.log("error on server, when sending mail", err)
+  }
 })
-
 
 app.listen(port, () => 
 console.log(`App is listening on port ${port}`));
-
