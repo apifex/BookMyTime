@@ -3,8 +3,7 @@ import React, { useRef, useState, useEffect, useCallback, useContext } from 'rea
 import EmailValidator from 'email-validator';
 import './booking.scss';
 import {DayContext} from '../../contexts/day-context'
-
-
+import { useMediaQuery } from 'react-responsive'
 
 const Booking = (props:any) => {
     
@@ -22,6 +21,7 @@ const Booking = (props:any) => {
 
     const setDayContext = useContext(DayContext)?.setDayContext
 
+    const isTabletOrMobile = useMediaQuery({ query: '(max-width: 968px)' })
 
     const handleConfirm = async () => {
         if (nameInputValue.length<3) {
@@ -39,12 +39,11 @@ const Booking = (props:any) => {
             return 
         }
         
-        let start = props.chosenHour
+        let start = props.chosenHour.substring(0,10)+"T"+props.chosenHour.substring(10,15)+":00"
         let end = start.substring(0,14) + '55' + start.substring(16)
-    
+        console.log("end", end)
         const eventToAdd = {
             'summary': `Meeting with ${nameInputValue}`,
-            // 'location': 'Varsaw, Poland',
             'description': reasonValue,
             'start': {
                 'dateTime': start,
@@ -59,7 +58,7 @@ const Booking = (props:any) => {
             },
             };
 
-        const addEvent = await fetch ('http://localhost:4000/createevent', {
+        const addEvent = await fetch ('http://localhost:5000/createevent', {
             method: 'POST',
             headers: {
                   'Content-Type': 'application/json;charset=utf-8'
@@ -68,29 +67,30 @@ const Booking = (props:any) => {
               })
               
             let result = await addEvent.text()
-            console.log(result)
+        
+        if (result === "OK") {
+            const mailOptions = {
+                from: "Mr Bean Office<apifex@gmail.com>",
+                to: mailInputValue,
+                subject: `Meeting confirmation`,
+                message: `Hello, Your meeting with Mr. Bean is fixed to ${props.chosenHour.substring(0,10)} at ${props.chosenHour.substring(10,15)}`
+                };
+    
+            const mailer = await fetch ('http://localhost:5000/sendmail', {
+                method: 'POST',
+                headers: {
+                      'Content-Type': 'application/json;charset=utf-8'
+                    },
+                body: JSON.stringify(mailOptions)
+                })
+                  
+                let responseMailer = await mailer.text()
+            if (responseMailer === 'OK') alert ('Your meeting has been fixed, you will recive a confirmation mail.')
+        } else alert("Error when fixing meeting. Try again!")
+        
+        handleCancel()
 
-        const mailOptions = {
-            from: "Mr Bean Office<apifex@gmail.com>",
-            to: mailInputValue,
-            subject: `Meeting with ${nameInputValue} is fixed to ${new Date(start).toLocaleDateString()} at ${new Date(start).toLocaleTimeString()}`,
-            generateTextFromHTML: true,
-            html: `<b>${reasonValue}</b>`
-            };
-
-        const mailer = await fetch ('http://localhost:4000/sendmail', {
-            method: 'POST',
-            headers: {
-                  'Content-Type': 'application/json;charset=utf-8'
-                },
-            body: JSON.stringify(mailOptions)
-              })
-              
-            let responseMailer = await mailer.text()
-            
-            handleCancel()
-            setDayContext({date: '', visible: false});
-            if (responseMailer==='email sent') alert('your meeting has been fixed, you will recive a confirmation mail')
+        setDayContext({date: {id:0}, visible: false});
     }
 
     useEffect(()=>{
@@ -121,12 +121,10 @@ const Booking = (props:any) => {
 
     useEffect(() => {
         document.addEventListener("keydown", escFunction, true);
-        
         return () => {
           document.removeEventListener("keydown", escFunction, true);
         };
       }, [escFunction]);
-    
     
     
     const handleNameInput = (e:any) => {
@@ -141,12 +139,12 @@ const Booking = (props:any) => {
         setReasonValue(e.target.value)
         setReasonError('')
     }
-    
+    const bookingWraperStyle = isTabletOrMobile?'booking-wraper-sm':'booking-wraper'
     return(
         <div className='modal'>
-            <div className='booking-wraper'>
+            <div className={bookingWraperStyle}>
                 You are going to book you visit on<br></br>
-                <b>{new Date(props.chosenHour).toDateString()} at {new Date(props.chosenHour).toLocaleTimeString()}</b> <br></br>
+                <b>{props.chosenHour.substring(0,10)} at {props.chosenHour.substring(10,15)}</b> <br></br>
                 Before you confirm, fill the form below:
                 <div className="input-group">
                     <input ref={nameInputRef} value={nameInputValue} type="input" onChange={handleNameInput} className="input" placeholder="Name" name="name" id='name' required />

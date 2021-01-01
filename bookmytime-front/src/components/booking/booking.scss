@@ -1,4 +1,3 @@
-
 $primary: #111f99;
 $secondary: #38ef7d;
 $white: #fff;
@@ -14,7 +13,6 @@ $gray: #9b9b9b;
     width: 100%;
     height: 100%;
 }
-
 
 .input-group {
   position: relative;
@@ -64,20 +62,16 @@ $gray: #9b9b9b;
     transition: 0.8s;
     font-size: 1rem;
     color: $primary;
-    // font-weight:700;    
   }
   padding-bottom: 6px;  
-//   font-weight: 700;
   border-color: red;
-//   border-image: linear-gradient(to right, $primary,$secondary);
   border-image-slice: 1;
 }
-/* reset input */
+
 .input{
   &:required,&:invalid { box-shadow:none; }
 }
 .input-helper {
-    
     color: rgb(247, 75, 75);
 }
 
@@ -92,10 +86,20 @@ $gray: #9b9b9b;
     border-style: solid; 
     border-color: #457B9D;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    
-
 }
 
+.booking-wraper-sm{
+  margin: auto;
+  margin-top: 80px;
+  background-color: #A8DADC;
+  width: 80%;
+  padding: 10px;
+  border-radius: 5px;
+  border-width: 1px;
+  border-style: solid; 
+  border-color: #457B9D;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
 .booking-textArea{
     background-color: #F1FAEE;
     width: 80%;
@@ -115,7 +119,6 @@ $gray: #9b9b9b;
     color: #F1FAEE;
     cursor: pointer;
     display: inline-block;
-    
     background-color: #E42535;
     letter-spacing: 0.1em;
     height: 2.85em;

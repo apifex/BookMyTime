@@ -1,124 +1,24 @@
 import React, {useContext, useEffect, useState, useCallback} from 'react';
-import styled from 'styled-components';
-
-
-import Booking from '../booking/Booking'
-import './day.scss'
+import Booking from '../booking/booking'
+import {DayStyled} from './day.styled'
 import {DayContext} from '../../contexts/day-context'
 import {DayPositionContext} from '../../contexts/dayPosition-context'
+import { useMediaQuery } from 'react-responsive'
+
+import './day.scss'
 
 const Day = () => {
     const date = useContext(DayContext)?.dayContext.date
     const visible = useContext(DayContext)?.dayContext.visible
-    const setVisible = useContext(DayContext)?.setDayContext
+    const setDayContext = useContext(DayContext)?.setDayContext
     
     const [bookingVisibility, setBookingVisibility] = useState(false)
     const [chosenHour, setChosenHour] = useState()
-    
-    const [days, setDays] = useState([{
-        "start":`2020-09-01T09:00:00+02:00`,
-        "end": `2020-09-01T09:55:00+02:00`,
-        availble: true,
-    }])
-    
-    useEffect(()=>{
-        
-        const checkBusy = async () => { 
-            
-            if (!date) return
-            let dayForDate: string
-                if (date.getDate()>9) {dayForDate = date.getDate().toString()} else {dayForDate = `0${date.getDate()}`}
-                let monthForDate
-                if (date.getMonth()>8) {monthForDate = date.getMonth()+1} else {monthForDate = `0${date.getMonth()+1}`}
-                const dateISO = `${date.getFullYear()}-${monthForDate}-${dayForDate}`
-                
-            let dayToCheck =
-                {
-                    "timeMin": `${dateISO}T08:00:00+02:00`,
-                    "timeMax": `${dateISO}T18:00:00+02:00`
-                }
-            const response = await fetch ('http://localhost:4000/freebusy', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json;charset=utf-8'
-                },
-                body: JSON.stringify(dayToCheck)
-              });
-              const result = await response.json()
-              const day = checkLocaly(result, dateISO)
-              
-              setDays(day)       
-        }
 
-        const checkLocaly = (busy:any, day:string) => {
-            const periodsForMeeting = [
-                {
-                    "start": `${day}T08:00:00+02:00`,
-                    "end": `${day}T08:55:00+02:00`,
-                    availble: true,
-                },
-                {
-                    "start": `${day}T09:00:00+02:00`,
-                    "end": `${day}T09:55:00+02:00`,
-                    availble: true,
-                },
-                {
-                    "start": `${day}T10:00:00+02:00`,
-                    "end": `${day}T10:55:00+02:00`,
-                    availble: true,
-                },
-                {
-                    "start": `${day}T11:00:00+02:00`,
-                    "end": `${day}T11:55:00+02:00`,
-                    availble: true,
-                },
-                {
-                    "start": `${day}T12:00:00+02:00`,
-                    "end": `${day}T12:55:00+02:00`,
-                    availble: true,
-                },
-                {
-                    "start": `${day}T13:00:00+02:00`,
-                    "end": `${day}T13:55:00+02:00`,
-                    availble: true,
-                },
-                {
-                    "start": `${day}T14:00:00+02:00`,
-                    "end": `${day}T14:55:00+02:00`,
-                    availble: true,
-                },
-                {
-                    "start": `${day}T15:00:00+02:00`,
-                    "end": `${day}T15:55:00+02:00`,
-                    availble: true,
-                },
-                {
-                    "start": `${day}T16:00:00+02:00`,
-                    "end": `${day}T16:55:00+02:00`,
-                    availble: true,
-                },
-                {
-                    "start": `${day}T17:00:00+02:00`,
-                    "end": `${day}T17:55:00+02:00`,
-                    availble: true,
-                },
-            ]
-            for (let i = 0; i<busy.length; i++) {
-                let busyevent = busy[i]
-                for (let k = 0; k<periodsForMeeting.length; k++){
-                    let timeformeet = periodsForMeeting[k]
-                    if (busyevent.start>=timeformeet.start && busyevent.end<=timeformeet.end) timeformeet.availble = false
-                    if (timeformeet.start>=busyevent.start && timeformeet.end<=busyevent.end) timeformeet.availble = false
-                    if (timeformeet.end>busyevent.start && timeformeet.end<busyevent.end) timeformeet.availble = false
-                }
-            }
-            return periodsForMeeting
-        }
-       checkBusy()
-    },[date])
+    const isTabletOrMobile = useMediaQuery({ query: '(max-width: 968px)' })
 
     const handleClose = useCallback(() => 
-    {setVisible({date: '', visible: false})},[setVisible])
+    {setDayContext({date: {id: 0}, visible: false})},[setDayContext])
     
     const escFunction = useCallback((event) => {
         event.stopPropagation()
@@ -129,7 +29,6 @@ const Day = () => {
 
     useEffect(() => {
         document.addEventListener("keydown", escFunction, false);
-
         return () => {
           document.removeEventListener("keydown", escFunction, false);
         };
@@ -137,8 +36,7 @@ const Day = () => {
     
     const handleClick = (e:any) => {
         setBookingVisibility(!bookingVisibility);
-        setChosenHour(e.target.id)
-        
+        setChosenHour(e.target.id) 
     }
 
     const closeBooking = () => {
@@ -146,53 +44,42 @@ const Day = () => {
     }
 
     let dayPosition = useContext(DayPositionContext)?.dayPositionContext || [0,0]
-    let left = dayPosition[0]
-    let top = dayPosition[1];
-    if (dayPosition[1]>300) top = dayPosition[1]-300
-    if (dayPosition[0]>700) left = dayPosition[0]-200
-    const DayStyled = styled.div`
-    position: absolute;
-    top: ${top}px;
-    left: ${left}px;
-    background-color: #A8DADC;
-    width: 200px;
-    padding: 10px;
-    border-radius: 5px;
-    border-width: 1px;
-    border-style: solid; 
-    border-color: #457B9D;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    `
     
-    
+    let top;
+    let left;
 
+    if (isTabletOrMobile) {
+      left = dayPosition[0]>220?dayPosition[0]-200:dayPosition[0]
+      top = dayPosition[1]>200?dayPosition[1]-200:dayPosition[1]
+    } else {
+      left = dayPosition[0]>900?dayPosition[0]-200:dayPosition[0]
+      top = dayPosition[1]>300?dayPosition[1]-300:dayPosition[1]
+    }
+    
+   
     return (
         visible?(
-        <div >
-        <DayStyled>
-        
-        <div className='close' onClick={handleClose}>x</div>
-        <div className='day-header'>{date?.toDateString()}</div>
-        <div>
-        {days.map(el => <div 
-            key={el.start}
-            id={el.start}
-            onClick={handleClick}
-            className={el.availble?'availble':'busyday'}>
-            {new Date(el.start).getHours()}:{new Date(el.start).getMinutes()} - {new Date(el.end).getHours()}:{new Date(el.end).getMinutes()}</div>)}    
-        </div>
-        </DayStyled>
-        <div>
-    {bookingVisibility?
-        <Booking chosenHour={chosenHour} closeBooking={closeBooking}/>:null
-    }
-        </div>
-        </div>): null
-        
-    
-    
+        <DayStyled top={top} left={left}>
+          <div >
+            <div className='close' onClick={handleClose}>x</div>
+            <div className='day-header'>{date?.date}</div>
+            <div>
+            {date?.periodsForMeeting.map(el => <div 
+                key={el.start}
+                id={date.date + el.start}
+                onClick={el.availble?handleClick:()=>{}}
+                className={el.availble?'availble':'busyday'}>
+                {el.start} - {el.end}</div>)
+            }    
+            </div>
+            <div>
+              {bookingVisibility?
+                <Booking chosenHour={chosenHour} closeBooking={closeBooking}/>:null
+              }
+            </div>
+          </div>
+        </DayStyled>): null
     )
-
 }
 
 export default Day

@@ -1,0 +1,33 @@
+.grid-aside {
+    grid-row-start: 1;
+    grid-row-end: 3;
+    
+}
+
+.welcome {
+    padding: 5px;
+    color: rgb(0, 204, 255);
+    align-self: center;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.mrbean {
+    width: 80%;
+    margin: 10px;
+    border: 2px solid #ffd900;
+    border-radius: 5%;
+}
+
+.welcome-sm {
+    padding: 2px;
+    color: rgb(0, 204, 255);
+    align-self: center;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.mrbean-sm {
+    width: 15%;
+    margin: 5px;
+}

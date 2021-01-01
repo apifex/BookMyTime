@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import cors from 'cors';
 import express from 'express';
+import {checkIsAvailble} from './checkIsAvailble'
 
 import {createEvent, freeBusy, sendMail} from './googleapis';
 
@@ -19,7 +20,16 @@ app.post('/freebusy', async (req, res) =>{
   }
 })
 
-// PATTERN FOR EVENT 
+app.post('/freebusymonth', async (req, res) =>{
+  try {
+    const daysInMonth = await checkIsAvailble(req.body)
+    res.send(daysInMonth)
+  } catch (err) {
+    console.log("Error on server, when calling freebusy", err)
+  }
+})
+
+// MODEL FOR EVENT 
 // let event = {
 //   'summary': 'event name',
 //   'description': 'some description',
@@ -41,7 +51,7 @@ app.post('/createevent', async (req, res) =>{
   }
 })
 
-// PATTERN FOR MAIL
+// MODEL FOR MAIL
 // let mail = {
 //   'to': 'someadress@blabla.com',
 //   'from': 'myadresse@gmail.com',

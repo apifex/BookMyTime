@@ -18,8 +18,7 @@ async function authorize() {
     return oAuth2Client
   } catch (err) {
     console.log("Error on authorization", err)
-  }
-  
+  } 
 }
 
 function getAccessToken(oAuth2Client) {
@@ -52,8 +51,9 @@ export const freeBusy = async (timeMin, timeMax) => {
       const calendar = google.calendar({version: 'v3', auth});
       const response = await calendar.freebusy.query({
         "resource": {
-          "timeMin": timeMin + ":00+02:00",
-          "timeMax": timeMax + ":00+02:00",
+          "timeMin": timeMin + ":00+00:00",
+          "timeMax": timeMax + ":00+00:00",
+          "timeZone": "Europe/Paris",
           items: [{ id: MAIL_ADDRESS }]
         }
       })
