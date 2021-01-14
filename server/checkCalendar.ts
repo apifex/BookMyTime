@@ -1,6 +1,6 @@
 import { freeBusy } from './googleApis';
 
-interface IMonth {
+export interface IMonth {
     m: string,
     y: string,
     length: number,
@@ -22,11 +22,12 @@ interface IDaysInMonth {
 
 
 export const checkCalendar = async ({y, m, length}: IMonth):Promise<IDaysInMonth[]> => {
-        
-    const timeMin = `${y}-${m}-01T00:00`
-    const timeMax = `${y}-${m}-${length}T23:59`
+        console.log(y, m, length)
+    const timeMin = `${y}-${m}-01T00:00:00+00:00`
+    const timeMax = `${y}-${m}-${length}T23:59:00+00:00`
     
     const busy = await freeBusy( timeMin, timeMax );
+    
 
     const daysInMonth: IDaysInMonth[] = [];
     const periodsForMeeting: IPeriodsForMeetings[] = [
@@ -150,7 +151,7 @@ export const checkCalendar = async ({y, m, length}: IMonth):Promise<IDaysInMonth
             }
         )
     }
-    
+    if (busy) {
     for(let i = 0; i < busy.length; i++) {
         let busyStart = busy[i].start
         let busyEnd = busy[i].end
@@ -213,7 +214,8 @@ export const checkCalendar = async ({y, m, length}: IMonth):Promise<IDaysInMonth
             if (x === periodsForMeeting.length) {daysInMonth[dayIdx].availble = false}
         }
             
-        }   
+        }
+    }   
     return daysInMonth
 }
             

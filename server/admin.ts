@@ -2,13 +2,12 @@ import fs from 'fs';
 import readline from 'readline';
 import {google} from 'googleapis';
 import credentials from './credentials/credentials.json'
-
-// const CREDENTIALS_PATH = process.env.CREDENTIALS_PATH;
+//TODO 
+//change the way you take token
 const TOKEN_PATH = './credentials/token.json'
 const SCOPES = ['https://www.googleapis.com/auth/calendar', 'https://mail.google.com/'];
 
-
-const getAccessToken = () => {
+export const getAccessToken = () => {
     const oAuth2Client = new google.auth.OAuth2(credentials.web.client_id, credentials.web.client_secret, credentials.web.redirect_uris[0]);
     const authUrl = oAuth2Client.generateAuthUrl({
       access_type: 'offline',

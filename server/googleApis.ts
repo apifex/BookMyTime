@@ -4,17 +4,34 @@ import token from './credentials/token.json'
 
 import Calendar = calendar_v3.Calendar;
 
-// const CREDENTIALS_PATH = process.env.CREDENTIALS_PATH;
-const TOKEN_PATH = './credentials/token.json'
 const MAIL_ADDRESS = "apifex@gmail.com";
-const SCOPES = ['https://www.googleapis.com/auth/calendar', 'https://mail.google.com/'];
 
 interface IFreeBusy {
     "start": string,
     "end": string
 }
 
+export interface IEvent {
+  "summary": string,
+  "description": string,
+  "start": {
+    "dateTime": string
+  },
+  "end": {
+    "dateTime": string
+  }
+}
+
+export interface IMail {
+  to: string,
+  from: string,
+  subject: string,
+  message: string
+
+}
+
 export const freeBusy = async (timeMin: string, timeMax: string ) => {
+    try {
     const oAuth2Client = new google.auth.OAuth2(web.client_id, web.client_secret, web.redirect_uris[0]);
     oAuth2Client.setCredentials(token)
     const calendar: Calendar = google.calendar({version: 'v3', auth: oAuth2Client});
@@ -28,32 +45,53 @@ export const freeBusy = async (timeMin: string, timeMax: string ) => {
           ],
         }
       })
-    if (busy.data.calendars) return busy.data.calendars[MAIL_ADDRESS].busy
+    if (busy.data.calendars) return busy.data.calendars[MAIL_ADDRESS].busy as IFreeBusy[]
+    } catch(error) {
+      console.log('Erron on freeBusy in googleApis ', error)
+    }
 }
 
-let x = freeBusy('2021-01-01T09:00:00-07:00','2021-01-25T09:00:00-07:00').then((res)=>console.log(res))
+export const createEvent = async (eventToAdd: IEvent) => {
+  try {
+    const oAuth2Client = new google.auth.OAuth2(web.client_id, web.client_secret, web.redirect_uris[0]);
+    oAuth2Client.setCredentials(token)
+    const calendar: Calendar = google.calendar({version: 'v3', auth: oAuth2Client});
+    const createEventRespons = await calendar.events.insert({
+      calendarId: 'primary',
+      requestBody: eventToAdd,
+      });
+    return createEventRespons.statusText;
+  } catch(error) {
+    console.log("Error on CreateEvent in googleApis: ", error)
+  }
+}
 
-console.log("final", x)
+const makeMailBody = ({to, from, subject, message}:IMail) => {
+  const str = ["Content-Type: text/plain; charset=\"UTF-8\"\n",
+      "MIME-Version: 1.0\n",
+      "Content-Transfer-Encoding: 7bit\n",
+      "to: ", to, "\n",
+      "from: ", from, "\n",
+      "subject: ", subject, "\n\n",
+      message
+  ].join('');
+  return Buffer.from(str).toString("base64").replace(/\+/g, '-').replace(/\//g, '_');
+}
 
-
-
-
-
-
-// calendar.events.list({
-        //   calendarId: 'primary',
-        //   timeMin: (new Date()).toISOString(),
-        //   maxResults: 10,
-        //   singleEvents: true,
-        //   orderBy: 'startTime',
-        // }, (err, res) => {
-        //   if (err) return console.log('The API returned an error: ' + err);
-        //   const events = res?.data.items;
-        //   if (events?.length) {
-        //     console.log('Upcoming 10 events:');
-        //     console.log(events)
-        //   } else {
-        //     console.log('No upcoming events found.');
-        //   }
-        // });
-
+export const sendMail = async ({to, from, subject, message}: IMail) => {
+  try {
+    const oAuth2Client = new google.auth.OAuth2(web.client_id, web.client_secret, web.redirect_uris[0]);
+    oAuth2Client.setCredentials(token)
+    const encodedMail = makeMailBody({to, from, subject, message});
+    const gmail = google.gmail({version: 'v1', auth: oAuth2Client});
+    const sendMailResponse = await gmail.users.messages.send({
+      userId: 'me',
+      requestBody: {
+        raw: encodedMail
+      },
+    })
+    return sendMailResponse.statusText
+  } catch(error) {
+    console.log("Error on sendMail in googleApi: ", error)
+  }
+}
