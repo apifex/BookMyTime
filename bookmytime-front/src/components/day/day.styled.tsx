@@ -1,10 +1,5 @@
 import styled from 'styled-components'
 
-interface IDayStyled {
-    top: number;
-    left: number;
-}
-
 export const DayStyled: React.FunctionComponent<IDayStyled> = styled.div<{top: number, left: number}>`
     position: absolute;
     top: ${props => props.top}px;

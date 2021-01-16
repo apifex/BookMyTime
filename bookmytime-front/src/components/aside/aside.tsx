@@ -4,8 +4,6 @@ import mrbean from '../../assets/mr-bean.png';
 
 import './aside.scss'
 
-
-
 const Aside = () => {
     const isTabletOrMobile = useMediaQuery({ query: '(max-width: 968px)' })    
     return(

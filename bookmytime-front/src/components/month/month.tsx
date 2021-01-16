@@ -1,65 +1,64 @@
-
-import React, {useContext, useEffect, useState} from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import {DayContext} from '../../contexts/day-context'
-import {DayPositionContext} from '../../contexts/dayPosition-context'
+import { DayContext } from '../../contexts/day-context'
 import './month.styles.scss'
 
+const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+const daysSm =['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+const useMonthLogic = ({month}: IMonthProps) => {
+    const [daysInMonth, setDaysInMonth]= useState([{id: 0,
+                                                    date: 'string',
+                                                    dayOfWeek: 0,
+                                                    availble: true,
+                                                    periodsForMeeting:
+                                                         [{start: 'string',
+                                                          end: 'string',
+                                                          availble: true}]}])
 
-interface IProps{
-    month: {
-        m: number,
-        y: number
-    }
-}
-
-const Month = ({month}: IProps) => {
-    
-    const [daysInMonth, setDaysInMonth] = useState([{id: 0, date: 'string', dayOfWeek: 0, availble: true, periodsForMeetings: [{start: 'string', end: 'string', availble: true}]}])
-    const setDayContext = useContext(DayContext)?.setDayContext
-    const dayContext = useContext(DayContext)?.dayContext
-    const setDayPositionContext = useContext(DayPositionContext)?.setDayPositionContext
+    const {context, setContext} = useContext(DayContext)                                                  
     const isTabletOrMobile = useMediaQuery({ query: '(max-width: 968px)' })
     
     useEffect(()=>{
-        const checkBusy = async () => {
-            let daysInMonth:any = []
+        const checkCalendar = async () => {
+            let daysInMonth: IDaysInMonth[] = []
             try{
-                let periodToCheck =
+                let monthToCheck =
                 {
                     "m": `${month.m<9?'0'+(month.m+1):month.m+1}`,
-                    "y": month.y
+                    "y": month.y,
+                    "length": month.length,
                 }
-                const response = await fetch ('http://localhost:5000/freebusymonth', {
+                const response = await fetch ('http://localhost:5000/checkcalendar', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json;charset=utf-8' },
-                                body: JSON.stringify(periodToCheck)})
-             
+                                body: JSON.stringify(monthToCheck)})
                 const result = await response.json()
                 daysInMonth = result
-                
             } catch (err) {
-                console.log("error when calling freebusy", err)
+                console.log("error when calling checkCalendar", err)
             }
             setDaysInMonth(daysInMonth)
         }
-       checkBusy() 
+       checkCalendar() 
     }, [month])
     
-    const handleClick = (e:any) => {
-        if (dayContext?.date.id.toString() === e.target.id.toString()) {
-            return setDayContext({date: {id: 0}, visible: false});
-        }
-        setDayContext({date: daysInMonth[Number(e.target.id)-1], visible: true});
-        setDayPositionContext([e.clientX, e.clientY]);
+    const handleClick = (e: any) => {
+        if (setContext && context) {
+            if (e.target.id === context.day.id.toString() && context.visible === true) {
+                setContext({ day: daysInMonth[Number(e.target.id)-1],
+                    position: [e.clientX, e.clientY],
+                    visible: false});
+            } else {
+                setContext({ day: daysInMonth[Number(e.target.id)-1],
+                    position: [e.clientX, e.clientY],
+                    visible: true});
+            }
+        }   
     }
     
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-    const daysSm =['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+    const daysToDisplay: React.ReactElement[] = []; // type???
     
-    const daysToDisplay:Array<any> = [];
-    
-    daysInMonth.forEach((day):void => {
+    daysInMonth.forEach((day): void => {
         if (day.id === 1) {
             let fstDay
             if (day.dayOfWeek-1>=0) {fstDay = day.dayOfWeek-1} else fstDay = 6
@@ -81,22 +80,29 @@ const Month = ({month}: IProps) => {
         }
     )
 
+    return {
+        daysToDisplay,
+        isTabletOrMobile,
+        handleClick,
+    }
+}
+
+
+const Month = (month: IMonthProps) => {
+    
+    const {daysToDisplay, isTabletOrMobile} = useMonthLogic(month)
         
     return(
             isTabletOrMobile?
             <div className="calendarMonth-sm">
-            {daysSm.map((day)=><div
-                key={day}
-                className='legend-sm'>{day}</div>)}
-            {daysToDisplay.map(day=>day)}
+            {daysSm.map((day) => <div key={day} className='legend-sm'>{day}</div>)}
+            {daysToDisplay.map(day => day)}
             </div>
             :
             <div className="calendarMonth">
-            {days.map((day)=><div
-                key={day}
-                className='legend'>{day}</div>)}
+            {days.map((day) => <div key={day} className='legend'>{day}</div>)}
             {daysToDisplay.map(day=>day)}
-            </div>   
+            </div>
     )
 }
 

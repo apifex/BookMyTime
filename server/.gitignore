@@ -2,6 +2,7 @@
 /.pnp
 /credentials
 .pnp.js
-
+/build
+/build/credentials
 .env
 

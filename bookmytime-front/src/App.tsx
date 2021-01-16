@@ -1,11 +1,11 @@
 import React from 'react';
-import './App.css';
-import MainPage from './pages/mainPage/mainPage'
+import './App.scss';
+import Calendar from './pages/calendar/calendar'
 
-function App() {
+const App = () => {
   return (
     <div className="App">
-      <MainPage />
+      <Calendar />
     </div>
   );
 }

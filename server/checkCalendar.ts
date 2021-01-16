@@ -22,7 +22,6 @@ interface IDaysInMonth {
 
 
 export const checkCalendar = async ({y, m, length}: IMonth):Promise<IDaysInMonth[]> => {
-        console.log(y, m, length)
     const timeMin = `${y}-${m}-01T00:00:00+00:00`
     const timeMax = `${y}-${m}-${length}T23:59:00+00:00`
     
