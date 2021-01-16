@@ -42,3 +42,14 @@ interface IServerActionsProps {
     end: string,
     targetHour: string,
 }
+
+type IDayContext = {
+    context: {day: IDaysInMonth,
+            position: number[],
+            visible: boolean},
+    setContext: React.Dispatch<React.SetStateAction<{
+        day: IDaysInMonth,
+        position: number[],
+        visible: boolean;
+    }>>
+}
