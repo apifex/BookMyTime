@@ -90,21 +90,8 @@ const useBookingLogic = (props: IBookingProps) => {
         let end = start.substring(0,14) + '55' + start.substring(16)
                 
         await serverActions({inputValue: inputValue, start: start, end: end, targetHour: props.targetHour})
-        handleCancel()
+        window.location.reload()
     }
-        
-
-    // const useClickOutside = () => {
-    //     const onStartListeningClickOutside = ''
-    //     const waitingOnClickOutside = ''
-    //     const onClickOutside = ''
-        
-    //     return {
-    //         onStartListeningClickOutside,
-    //         waitingOnClickOutside,
-    //         onClickOutside
-    //     }
-    //   }
 
     return {
         nameInputRef,
@@ -136,7 +123,7 @@ const serverActions = async ({inputValue, start, end, targetHour}:IServerActions
         },
     };
 
-    const addEvent = await fetch ('/createevent', {
+    const addEvent = await fetch ('api/createevent', {
         method: 'POST',
         headers: {'Content-Type': 'application/json;charset=utf-8'},
         body: JSON.stringify(eventToAdd)
@@ -150,7 +137,7 @@ const serverActions = async ({inputValue, start, end, targetHour}:IServerActions
             subject: `Meeting confirmation`,
             message: `Hello, Your meeting with Mr. Bean is fixed to ${targetHour.substring(0,10)} at ${targetHour.substring(10,15)}`
             };   
-        const sendMail = await fetch ('/sendmail', {
+        const sendMail = await fetch ('api/sendmail', {
             method: 'POST',
             headers: {'Content-Type': 'application/json;charset=utf-8'},
             body: JSON.stringify(mailOptions)
@@ -164,7 +151,7 @@ const serverActions = async ({inputValue, start, end, targetHour}:IServerActions
             message: `Hello, Mr. Bean, ${inputValue.nameValue} wish to meet with you. The meeting has been fixed to ${targetHour.substring(0,10)} at ${targetHour.substring(10,15)}. The purpose of the meeting: ${inputValue.purposeValue}. We've saved those informations in your calendar.`
             };
     
-        fetch ('/sendmail', {
+        fetch ('api/sendmail', {
             method: 'POST',
             headers: {'Content-Type': 'application/json;charset=utf-8'},
             body: JSON.stringify(mailForAdminOptions)
@@ -187,8 +174,9 @@ const Booking = (props: IBookingProps) => {
         isTabletOrMobile
     } = useBookingLogic(props)
    
+
     return(
-        <div className='modal'>
+        <div className={props.waitingOnClickOutside?'modal':''}>
             <div className={isTabletOrMobile?'booking-wraper-sm':'booking-wraper'}>
                 You are going to book you visit on<br></br>
                 <b>{props.targetHour.substring(0,10)} at {props.targetHour.substring(10,15)}</b> <br></br>

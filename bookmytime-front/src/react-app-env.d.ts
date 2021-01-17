@@ -30,6 +30,7 @@ interface IDayStyled {
 interface IBookingProps {
     targetHour: string,
     closeBooking: () => void,
+    waitingOnClickOutside: boolean
 }
 
 interface IServerActionsProps {

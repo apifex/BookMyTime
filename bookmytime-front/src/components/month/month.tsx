@@ -28,7 +28,7 @@ const useMonthLogic = ({month}: IMonthProps) => {
                     "y": month.y,
                     "length": month.length,
                 }
-                const response = await fetch ('/checkcalendar', {
+                const response = await fetch ('api/checkcalendar', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json;charset=utf-8' },
                                 body: JSON.stringify(monthToCheck)})

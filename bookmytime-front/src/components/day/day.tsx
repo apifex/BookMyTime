@@ -6,6 +6,30 @@ import { useMediaQuery } from 'react-responsive'
 
 import './day.scss'
 
+const useClickOutside = () => {
+  const [waitingOnClickOutside, setWaitingOnClickOutside] = useState(false);
+  const exit = (e:any) => {
+    if (e.target.className === 'modal') {
+      setWaitingOnClickOutside(false)
+      onClickOutside()}   
+  }
+  
+  const onStartListeningClickOutside = () => {
+      setWaitingOnClickOutside(true)
+      document.addEventListener("click", exit, true);    
+  }
+  
+  const onClickOutside = () => {
+      document.removeEventListener("click", exit, true);
+  }
+
+  return {
+      onStartListeningClickOutside,
+      waitingOnClickOutside,
+      onClickOutside
+  }
+}
+
 const useDayLogic = () => {
     const {context} = useContext(DayContext)
     const [isDayVisible, setIsDayVisible] = useState(false)
@@ -36,12 +60,24 @@ const useDayLogic = () => {
     
     const handleClick = (e:any) => {
         setIsBookingVisibile(!isbookingVisible);
-        setTargetHour(e.target.id) 
+        onStartListeningClickOutside()
+        setTargetHour(e.target.id)
     }
 
     const closeBooking = () => {
         setIsBookingVisibile(false)
+        onClickOutside()
     }
+
+    const { onStartListeningClickOutside,
+            waitingOnClickOutside,
+            onClickOutside
+          } = useClickOutside()
+
+    useEffect(()=>{
+      if (!waitingOnClickOutside) {setIsBookingVisibile(false)
+      console.log('effect')}
+    },[waitingOnClickOutside])
     
     let dayPosition = context?context.position:[0,0]
     
@@ -62,20 +98,23 @@ const useDayLogic = () => {
       handleClick,
       closeBooking,
       targetHour,
+      waitingOnClickOutside
     }
    
 }
 
 const Day = () => {
     
-  const {context,
-         isbookingVisible,
-         isDayVisible,
-         dayPosition,
-         handleClose,
-         handleClick,
-         closeBooking,
-         targetHour} = useDayLogic()
+  const { context,
+          isbookingVisible,
+          isDayVisible,
+          dayPosition,
+          handleClose,
+          handleClick,
+          closeBooking,
+          targetHour,
+          waitingOnClickOutside } = useDayLogic()
+
     
    return (
         context?isDayVisible?(
@@ -94,7 +133,7 @@ const Day = () => {
             </div>
             <div>
               {isbookingVisible?
-                <Booking targetHour={targetHour} closeBooking={closeBooking}/>:null
+                <Booking waitingOnClickOutside={waitingOnClickOutside} targetHour={targetHour} closeBooking={closeBooking}/>:null
               }
             </div>
           </div>
