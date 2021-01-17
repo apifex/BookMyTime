@@ -123,7 +123,7 @@ const serverActions = async ({inputValue, start, end, targetHour}:IServerActions
         },
     };
 
-    const addEvent = await fetch ('api/createevent', {
+    const addEvent = await fetch ('/createevent', {
         method: 'POST',
         headers: {'Content-Type': 'application/json;charset=utf-8'},
         body: JSON.stringify(eventToAdd)
@@ -137,7 +137,7 @@ const serverActions = async ({inputValue, start, end, targetHour}:IServerActions
             subject: `Meeting confirmation`,
             message: `Hello, Your meeting with Mr. Bean is fixed to ${targetHour.substring(0,10)} at ${targetHour.substring(10,15)}`
             };   
-        const sendMail = await fetch ('api/sendmail', {
+        const sendMail = await fetch ('/sendmail', {
             method: 'POST',
             headers: {'Content-Type': 'application/json;charset=utf-8'},
             body: JSON.stringify(mailOptions)
@@ -151,7 +151,7 @@ const serverActions = async ({inputValue, start, end, targetHour}:IServerActions
             message: `Hello, Mr. Bean, ${inputValue.nameValue} wish to meet with you. The meeting has been fixed to ${targetHour.substring(0,10)} at ${targetHour.substring(10,15)}. The purpose of the meeting: ${inputValue.purposeValue}. We've saved those informations in your calendar.`
             };
     
-        fetch ('api/sendmail', {
+        fetch ('/sendmail', {
             method: 'POST',
             headers: {'Content-Type': 'application/json;charset=utf-8'},
             body: JSON.stringify(mailForAdminOptions)
