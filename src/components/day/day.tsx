@@ -75,8 +75,7 @@ const useDayLogic = () => {
           } = useClickOutside()
 
     useEffect(()=>{
-      if (!waitingOnClickOutside) {setIsBookingVisibile(false)
-      console.log('effect')}
+      if (!waitingOnClickOutside) setIsBookingVisibile(false)
     },[waitingOnClickOutside])
     
     let dayPosition = context?context.position:[0,0]

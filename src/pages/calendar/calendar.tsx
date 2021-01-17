@@ -10,8 +10,8 @@ const Months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
 
 const useCalendarLogic = () => {
     const [today] = useState(new Date());
-    const [firstMonth, setFirstMonth] = useState({m: 0, y: 2020, length: 30})
-    const [secondMonth, setSecondMonth] = useState({m: 0, y: 2020, length: 30})
+    const [firstMonth, setFirstMonth] = useState({m: 0, y: 2020, length: 0})
+    const [secondMonth, setSecondMonth] = useState({m: 0, y: 2020, length: 0})
     
     useEffect(()=>{
         setFirstMonth({m: today.getMonth(), y: today.getFullYear(), length: new Date(today.getFullYear(), today.getMonth()+1, 0).getDate()})

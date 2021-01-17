@@ -18,28 +18,25 @@ const useMonthLogic = ({month}: IMonthProps) => {
     const {context, setContext} = useContext(DayContext)                                                  
     const isTabletOrMobile = useMediaQuery({ query: '(max-width: 968px)' })
     
-    useEffect(()=>{
-        const checkCalendar = async () => {
-            let daysInMonth: IDaysInMonth[] = []
-            try{
-                let monthToCheck =
+    useEffect(() => {
+        let monthToCheck =
                 {
                     "m": `${month.m<9?'0'+(month.m+1):month.m+1}`,
                     "y": month.y,
                     "length": month.length,
-                }
+                }    
+        const checkCalendar = async () => {
+            try{
                 const response = await fetch ('https://bookmytime-node.azurewebsites.net/checkcalendar', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json;charset=utf-8' },
-                                body: JSON.stringify(monthToCheck)})
-                const result = await response.json()
-                daysInMonth = result
+                                body: JSON.stringify(monthToCheck)}).then((res)=>res.json())
+                setDaysInMonth(response)
             } catch (err) {
                 console.log("error when calling checkCalendar", err)
             }
-            setDaysInMonth(daysInMonth)
         }
-       checkCalendar() 
+       if (month.length>0) checkCalendar() 
     }, [month])
     
     const handleClick = (e: any) => {
