@@ -30,7 +30,7 @@
     "build": "react-scripts build",
     "eject": "react-scripts eject"
   },
-  "proxy": "https://bookmytime-node.azurewebsites.net/",
+  
   "eslintConfig": {
     "extends": "react-app"
   },
