@@ -1,0 +1,1 @@
+{"version":3,"file":"index.css","mappings":"AAEA,KACI,wBAHQ","sources":["webpack://bookmytime/./src/style.scss"],"sourcesContent":["$body-color:rgb(178, 211, 178);\n\nbody {\n    background-color: $body-color;\n}"],"names":[],"sourceRoot":""}
