@@ -5,7 +5,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
     entry: {
        index: './src/index.ts',
-       print: './src/print.ts',
     },
     module: {
         rules: [
@@ -18,7 +17,7 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            title: "output test"
+            title: "Book My Time"
         }),
     ],
     resolve: {
