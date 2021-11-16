@@ -5,7 +5,7 @@ import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 dayjs.extend(isSameOrBefore)
 
 export function createDaysTable(monthObject: IMonthObject[]): HTMLElement {
-    const table = createElement('table', undefined, 'calendar')
+    const table = createElement('table', undefined, 'calendarTable')
     const thead = createElement('thead')
     const tDaysRow = createElement('tr')
     const days = ['Sun', 'Mon', 'Thu', 'Wed', 'Thr', 'Fri', 'Sat']
@@ -37,7 +37,7 @@ export function createDaysTable(monthObject: IMonthObject[]): HTMLElement {
             acc = 0
         }
         tr.appendChild(createElement('td', [
-            'day',
+            'days',
             day.availble ? 'free' : 'busy',
             isToday ? 'today' : 'null',
             isBefore ? 'null' : 'disabled'], day.id.toString(), day.id.toString()))

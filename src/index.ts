@@ -2,7 +2,7 @@ import './scss/custom.scss'
 
 import 'bootstrap'
 
-import { CalendarWidget } from './app'
+import { CalendarWidget } from './modules/calendar'
 
 new CalendarWidget()
 

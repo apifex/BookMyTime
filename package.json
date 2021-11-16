@@ -46,6 +46,7 @@
     "bootstrap-icons": "^1.7.0",
     "dayjs": "^1.10.7",
     "dotenv": "^10.0.0",
+    "joi": "^17.4.2",
     "lodash": "^4.17.21",
     "popper.js": "^1.16.1"
   },
