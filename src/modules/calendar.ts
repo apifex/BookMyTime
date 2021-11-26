@@ -1,14 +1,14 @@
 import dayjs, { Dayjs } from 'dayjs'
 import updateLocal from 'dayjs/plugin/updateLocale'
 import objectSupport from 'dayjs/plugin/objectSupport'
+
 import { getCalendar } from '../api/api'
-import { createHoursTable } from '../utils/html/createHoursTable'
 import { Reservation } from './reservation'
-import { IMonthObject } from '../types'
-import { wrapperComponent } from '../components/wrapper.component'
-import { headerComponent } from '../components/header.component'
-import { calendarBodyComponent } from '../components/calendarBody.component'
-import { createDaysTable } from '../utils/html/createDaysTable'
+
+import { wrapperComponent, calendarBodyComponent, headerComponent  } from '../components'
+import { createHoursTable, createDaysTable } from '../utils'
+
+import { IMonthObject, ICalendarWidget} from '../types'
 
 dayjs.extend(updateLocal)
 dayjs.extend(objectSupport)
@@ -23,29 +23,10 @@ dayjs.updateLocale('en', {
     ]
 })
 
+// w folderze config dodać localsy
 
-export interface CalendarWidgetInterface {
-    state: {
-        today: Dayjs,
-        currentMonth: Dayjs,
-        currentDate: Dayjs,
-        monthObject: IMonthObject[] | null
-    }
-    elements: {
-        [key: string]: HTMLElement | HTMLCollectionOf<Element> | null,
-        calendarBody: HTMLElement,
-        header: HTMLElement,
-        headMonth: HTMLElement,
-        headDay: HTMLElement,
-        reset: HTMLElement,
-        prev: HTMLElement,
-        next: HTMLElement,
-        days: HTMLCollectionOf<Element> | null,
-        hours: HTMLCollectionOf<Element> | null
-    }
-}
 
-export class CalendarWidget implements CalendarWidgetInterface {
+export class CalendarWidget implements ICalendarWidget {
     state: {
         today: Dayjs,
         currentMonth: Dayjs,
@@ -64,8 +45,8 @@ export class CalendarWidget implements CalendarWidgetInterface {
         next: HTMLElement,
         days: HTMLCollectionOf<Element> | null,
         hours: HTMLCollectionOf<Element> | null
-    }
-
+    } 
+    // wstawic loader zamiast null
     constructor() {
         this.state = {
             today: dayjs(),

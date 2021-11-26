@@ -4,6 +4,8 @@
 
 $font-primary: "Lato", Arial, sans-serif;
 $primary: #e13a9d;
+$black: black;
+$white: white;
 
 body {
     font-family: $font-primary;
@@ -93,7 +95,8 @@ h5,
         opacity: 0.5;
         z-index: -1;
     }
-    @include media-breakpoint-down(md) {
+    
+    @media screen and (min-width: 767) {
         width: 100%;
         padding: 20px 0;
     }
@@ -203,7 +206,7 @@ h5,
     width: 65%;
     background: $white;
     padding: 40px 20px 20px 20px;
-    @include media-breakpoint-down(md) {
+    @media screen and (min-width: 767)  {
         width: 100%;
     }
 }
@@ -244,9 +247,9 @@ tbody td {
         margin: 0 auto;
         transform: translateY(-50%);
         border-radius: 50%;
-        @include transition(0.3s);
+        // @include transition(0.3s);
         z-index: -1;
-        @include media-breakpoint-down(sm) {
+        @media screen and (min-width: 767)  {
             width: 25px;
             height: 25px;
         }

@@ -1,33 +1,10 @@
 import { Dayjs } from "dayjs";
 import { sendEmail, addEventToCalendar } from "../api/api";
-import { reservationComponent } from "../components/reservation.component";
+import { reservationComponent } from "../components";
+import { IReservation } from "../types";
 import joi from 'joi'
 
-export interface IReservation {
-    date: Dayjs
-    hour: string
-    day: string
-    startTime: string
-    endTime: string
-    state: {
-        [key: string]: string,
-        name: string,
-        email: string,
-        subject: string,
-        location: string
-    }
-    elements: IElements
-}
 
-interface IElements {
-    reservationModal: HTMLElement,
-    confirmBtn: HTMLElement,
-    cancelBtn: HTMLElement,
-    inputName: HTMLInputElement,
-    inputEmail: HTMLInputElement,
-    inputSubject: HTMLInputElement,
-    alert: HTMLElement,
-}
 
 export class Reservation implements IReservation {
     date: Dayjs
@@ -44,6 +21,7 @@ export class Reservation implements IReservation {
     }
     elements: {
         reservationModal: HTMLElement,
+        reservationForm: HTMLElement,
         confirmBtn: HTMLElement,
         cancelBtn: HTMLElement,
         inputName: HTMLInputElement,
@@ -60,7 +38,7 @@ export class Reservation implements IReservation {
         this.startTime = day.format()
         //TODO : add 'time of meetig ... 30min... 45min'
         this.endTime = day.set('minute', 55).format()
-        //TODO : add 'chose locatiom'
+        //TODO : add 'chose location'
         this.state = { name: '', email: '', subject: '', location: 'online' }
         document.body.append(reservationComponent(this.day, this.hour))
         this.elements = this.getHTMLElements()
@@ -69,17 +47,19 @@ export class Reservation implements IReservation {
 
     getHTMLElements () {
         const reservationModal = document.getElementById('reservationModal')
+        const reservationForm = document.getElementById('reservationForm')
         const confirmBtn = document.getElementById('confirmBtn')
         const cancelBtn = document.getElementById('cancelBtn')
         const inputName = document.getElementById('inputName') as HTMLInputElement
         const inputEmail = document.getElementById('inputEmail') as HTMLInputElement
         const inputSubject = document.getElementById('inputSubject') as HTMLInputElement
         const alert = document.getElementById('alert')
-        if (!reservationModal || !confirmBtn || !cancelBtn || !inputName || !inputEmail || !inputSubject || !alert) {
+        if (!reservationModal || !reservationForm || !confirmBtn || !cancelBtn || !inputName || !inputEmail || !inputSubject || !alert) {
             throw Error('Sorry, something went wrong. Try to refresh the page.')
         }
         return {
             reservationModal,
+            reservationForm,
             confirmBtn,
             cancelBtn,
             inputName,
@@ -135,6 +115,7 @@ export class Reservation implements IReservation {
                     location: this.state.location
                 })
                 if (sendEmailResponse === 'OK') {
+                    //TODO close
                     this.alert('success')
                 } else { this.alert('error') }
             } else { this.alert('error') }

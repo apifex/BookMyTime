@@ -1,5 +1,4 @@
-import { createElement } from "../utils/html/createHtmlElement"
-import { createFormElement } from "../utils/html/createFormElement"
+import { createElement, createFormElement } from "../utils"
 
 export const reservationComponent = (day: string, hour: string) => {
     const reservationComponent = createElement('div', ['modal'], 'reservationModal')
@@ -8,7 +7,7 @@ export const reservationComponent = (day: string, hour: string) => {
     const alertPlaceholder = createElement('div', undefined, 'alertPlaceholder', undefined)
     const alertWrap = createElement('div', ['alert'], 'alert')
     const header = createElement('h5', ['modal-title'], undefined, `You are going to take a meeting on ${day} at ${hour} `)
-    const form = createElement('form', undefined,)
+    const form = createElement('form', undefined, 'reservationForm')
     const inputName = createFormElement('Your name:', 'inputName', 'name')
     const inputEmail = createFormElement('Your email:', 'inputEmail', 'email')
     const inputSubject = createFormElement('Subject of meeting:', 'inputSubject', 'subject')

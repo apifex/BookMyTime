@@ -1,4 +1,4 @@
-import { createElement } from '../utils/html/createHtmlElement'
+import { createElement } from '../utils'
 
 export function headerComponent() {
 

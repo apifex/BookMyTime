@@ -1,5 +1,5 @@
 import { createElement } from "./createHtmlElement"
-import { IMonthObject } from "../../types"
+import { IMonthObject } from "../types"
 import dayjs from "dayjs"
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 dayjs.extend(isSameOrBefore)
