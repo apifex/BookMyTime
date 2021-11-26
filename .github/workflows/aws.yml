@@ -33,7 +33,7 @@ on:
 
 env:
   AWS_REGION: eu-west-3                   # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: 126540220802.dkr.ecr.eu-west-3.amazonaws.com/bookmytime-frontend           # set this to your Amazon ECR repository name
+  ECR_REPOSITORY: bookmytime-frontend           # set this to your Amazon ECR repository name
   ECS_SERVICE: bookmytime-FrontendService-wynHoUF7rsFm                 # set this to your Amazon ECS service name
   ECS_CLUSTER: bookmytime                 # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: .aws/task-definition.json # set this to the path to your Amazon ECS task definition
