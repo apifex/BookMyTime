@@ -3,7 +3,7 @@ import { createElement } from '../utils'
 export function headerComponent() {
 
     const headerComponent = createElement('div', ['wrap-header', 'd-flex', 'align-items-center', 'img'], 'wrap-header')
-    headerComponent.style.backgroundImage = "url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80')"
+    headerComponent.style.backgroundImage = "url('https://i.guim.co.uk/img/media/6088d89032f8673c3473567a91157080840a7bb8/0_567_3840_2304/master/3840.jpg?width=1020&quality=85&auto=format&fit=max&s=3ad288353228d67132f5d946468ebfe8')"
 
     const header = createElement('div', ['p-0'], 'header')
     const todayBtn = createElement('p', undefined, 'reset', 'Today')
