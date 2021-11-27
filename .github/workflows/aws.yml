@@ -80,15 +80,15 @@ jobs:
         aws ecs describe-task-definition --task-definition bookmytime-frontend --query taskDefinition > task-definition.json
       
     - name: print test
-      run: echo 'tescik ${{steps.build.outputs}}'   
-      
+      run: echo 'tescik ${{steps.build.outputs.metadata}} ${{steps.build.outputs.name}}'   
+
     - name: Render Amazon ECS task definition
       id: render-web-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: task-definition.json
         container-name: ${{env.CONTAINER_NAME}}
-        image: apifex/bookmytime-frontend:latest
+        image: apifex/bookmytime-frontend:${{ github.sha }}
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
