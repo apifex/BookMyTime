@@ -69,16 +69,18 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: Build & push Docker Image
+      id: build
       uses: docker/build-push-action@v2
       with: 
         push: true
-        tags: apifex/bookmytime-frontend:latest
+        tags: apifex/bookmytime-frontend:${{ github.sha }}
     
     - name: Download task definition
       run: |
         aws ecs describe-task-definition --task-definition bookmytime-frontend --query taskDefinition > task-definition.json
-    
+      
     - name: Render Amazon ECS task definition
+      run: echo 'tescik ${{steps.build.outputs}}'
       id: render-web-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
