@@ -80,7 +80,7 @@ jobs:
         aws ecs describe-task-definition --task-definition bookmytime-frontend --query taskDefinition > task-definition.json
       
     - name: print test
-      run: echo 'tescik ${{steps.build.outputs.metadata['image.name']}}'   
+      run: echo 'tescik ${{steps.build.outputs.metadata[image.name]}}'   
 
     - name: Render Amazon ECS task definition
       id: render-web-container
