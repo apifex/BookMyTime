@@ -70,19 +70,20 @@ export class Reservation implements IReservation {
     }
 
     addEventListeners() {
-        this.elements.confirmBtn.addEventListener('click', this.confirmHandler)
-        this.elements.cancelBtn.addEventListener('click', this.closeReservationHandler)
+        this.elements.confirmBtn.addEventListener('click', this.clickHandler)
+        this.elements.cancelBtn.addEventListener('click', this.clickHandler)
         this.elements.inputName.oninput = this.inputHandler
         this.elements.inputEmail.oninput = this.inputHandler
         this.elements.inputSubject.oninput = this.inputHandler
         this.elements.inputName.value = this.state.name
         this.elements.inputEmail.value = this.state.email
         this.elements.inputSubject.value = this.state.subject
+        document.addEventListener('keydown', this.keyboardHandler)
     }
 
     removeEventListeners() {
-        if (this.elements.confirmBtn) this.elements.confirmBtn.removeEventListener('click', this.confirmHandler)
-        if (this.elements.cancelBtn) this.elements.cancelBtn.removeEventListener('click', this.closeReservationHandler)
+        if (this.elements.confirmBtn) this.elements.confirmBtn.removeEventListener('click', this.clickHandler)
+        if (this.elements.cancelBtn) this.elements.cancelBtn.removeEventListener('click', this.clickHandler)
     }
 
     inputHandler = (ev: Event) => {
@@ -90,9 +91,20 @@ export class Reservation implements IReservation {
         const target = ev.currentTarget as HTMLInputElement
         this.state[target.name] = target.value
     }
-
-    confirmHandler = async (ev: Event) => {
+    
+    clickHandler = (ev: MouseEvent) => {
         ev.preventDefault()
+        const target = ev.currentTarget as Element
+        if (target.id == 'confirmBtn') this.confirm()
+        if (target.id == 'cancelBtn') this.close()                                                                                                                                                                                                                                                                          
+    }
+
+    keyboardHandler = (ev: KeyboardEvent) => {
+        ev.preventDefault()
+        if (ev.code == 'Escape') this.close()
+        if (ev.code == 'Enter') this.confirm()
+    }
+    confirm = async () => {
         const formValidationSchema = joi.object({
             name: joi.string().alphanum().min(3).max(30).required(),
             email: joi.string().email({ minDomainSegments: 2, tlds: false }).required(),
@@ -127,10 +139,8 @@ export class Reservation implements IReservation {
         }
     }
 
-    closeReservationHandler = (ev: Event) => {
-        ev.preventDefault()
-        const target = ev.currentTarget as Element
-        if (target.id == 'reservationContainer' || target.id == 'cancelBtn') this.elements.reservationModal.remove()
+    close = () => {
+        this.elements.reservationModal.remove()
         this.removeEventListeners()
     }
 
