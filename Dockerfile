@@ -4,7 +4,7 @@ FROM node:14.18.1 as build
 
 ENV NODE_ENV=development
 
-COPY docker-entrypoint.sh /docker-entrypoint.sh
+COPY entrypoint.sh /docker-entrypoint.sh
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 
