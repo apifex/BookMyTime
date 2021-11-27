@@ -4,10 +4,6 @@ FROM node:14.18.1 as build
 
 ENV NODE_ENV=development
 
-COPY entrypoint.sh /docker-entrypoint.sh
-
-ENTRYPOINT ["/docker-entrypoint.sh"]
-
 WORKDIR /app
 
 COPY ["package.json", "package-lock.json", "./"]
