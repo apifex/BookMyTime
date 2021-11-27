@@ -77,7 +77,9 @@ jobs:
         tags: apifex/bookmytime-frontend:latest
     # - name: Build & push Docker image 
     #   uses: mr-smithers-excellent/docker-build-push@v5
-    
+    - name: Download task definition
+      run: |
+        aws ecs describe-task-definition --task-definition bookmytime-frontend --query taskDefinition > task-definition.json
     # with:
     #   image: repo/image
     #   tags: v1, latest
@@ -113,7 +115,7 @@ jobs:
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
-        task-definition: ${{ env.ECS_TASK_DEFINITION }}
+        task-definition: task-definition.json
         service: ${{ env.ECS_SERVICE }}
         cluster: ${{ env.ECS_CLUSTER }}
         wait-for-service-stability: true
