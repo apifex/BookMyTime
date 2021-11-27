@@ -4,7 +4,7 @@ FROM node:14.18.1 as build
 
 ENV NODE_ENV=development
 
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
 
 WORKDIR /app
 
