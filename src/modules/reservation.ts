@@ -32,6 +32,7 @@ export class Reservation implements IReservation {
 
 
     constructor(day: Dayjs) {
+        console.log('constructor hha')
         this.date = day
         this.hour = day.format('HH:mm')
         this.day = day.format(`dddd, MMMM DD`)
@@ -95,12 +96,14 @@ export class Reservation implements IReservation {
     clickHandler = (ev: MouseEvent) => {
         ev.preventDefault()
         const target = ev.currentTarget as Element
+        console.log('target', target)
         if (target.id == 'confirmBtn') this.confirm()
         if (target.id == 'cancelBtn') this.close()                                                                                                                                                                                                                                                                          
     }
 
     keyboardHandler = (ev: KeyboardEvent) => {
         ev.preventDefault()
+        console.log('key press', ev.code)
         if (ev.code == 'Escape') this.close()
         if (ev.code == 'Enter') this.confirm()
     }
