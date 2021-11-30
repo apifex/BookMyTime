@@ -4,18 +4,19 @@ export interface ICalendarWidget {
         currentMonth: Dayjs,
         currentDate: Dayjs,
         monthObject: IMonthObject[] | null
+        
     }
     elements: {
-        [key: string]: HTMLElement | HTMLCollectionOf<Element> | null,
         calendarBody: HTMLElement,
         header: HTMLElement,
         headMonth: HTMLElement,
         headDay: HTMLElement,
         reset: HTMLElement,
+        close: HTMLElement,
         prev: HTMLElement,
         next: HTMLElement,
-        days: HTMLCollectionOf<Element> | null,
-        hours: HTMLCollectionOf<Element> | null
+        days: HTMLCollectionOf<Element>,
+        hours: HTMLCollectionOf<Element>
     }
 }
 
@@ -45,6 +46,7 @@ export interface IReservation {
         subject: string,
         location: string
     }
+    loaderState: boolean
     elements: IElements
 }
 

@@ -3,7 +3,7 @@ import { createElement, createFormElement } from "../utils"
 export const reservationComponent = (day: string, hour: string) => {
     const reservationComponent = createElement('div', ['modal'], 'reservationModal')
     const container = createElement('div', ['container'], 'reservationContainer')
-    const body = createElement('div', ['body'])
+    const body = createElement('div', ['body'], 'reservationBox')
     const alertPlaceholder = createElement('div', undefined, 'alertPlaceholder', undefined)
     const alertWrap = createElement('div', ['alert'], 'alert')
     const header = createElement('h5', ['modal-title'], undefined, `You are going to take a meeting on ${day} at ${hour} `)

@@ -16,8 +16,6 @@ async function errorHandler(promise: any) {
                 console.log('Error', error)
             }
         }
-    
-        //
     }
 }
 
@@ -25,7 +23,7 @@ function requestToApi(endpoint = "calendar/check", params = {}, requestData = {}
     return errorHandler(async () => {
         const { data } = await axios({
             method,
-            url: `api/${endpoint}`,
+            url: `/api/${endpoint}`,
             params,
             data: requestData
         })

@@ -1,30 +1,13 @@
-import dayjs, { Dayjs } from 'dayjs'
-import updateLocal from 'dayjs/plugin/updateLocale'
-import objectSupport from 'dayjs/plugin/objectSupport'
+import { Dayjs } from 'dayjs'
+import dayjs from '../config/dayjs.config'
 
 import { getCalendar } from '../api/api'
 import { Reservation } from './reservation'
 
-import { wrapperComponent, calendarBodyComponent, headerComponent  } from '../components'
+import { wrapperComponent, calendarBodyComponent, headerComponent } from '../components'
 import { createHoursTable, createDaysTable } from '../utils'
 
-import { IMonthObject, ICalendarWidget} from '../types'
-
-dayjs.extend(updateLocal)
-dayjs.extend(objectSupport)
-
-dayjs.updateLocale('en', {
-    months: [
-        "January", "February", "March", "April", "May", "June", "July",
-        "August", "September", "October", "November", "December"
-    ],
-    weekdays: [
-        "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
-    ]
-})
-
-// w folderze config dodać localsy
-
+import { IMonthObject, ICalendarWidget } from '../types'
 
 export class CalendarWidget implements ICalendarWidget {
     state: {
@@ -33,20 +16,19 @@ export class CalendarWidget implements ICalendarWidget {
         currentDate: Dayjs,
         monthObject: IMonthObject[] | null
     }
-
     elements: {
-        [key: string]: HTMLElement | HTMLCollectionOf<Element> | null,
         calendarBody: HTMLElement,
         header: HTMLElement,
         headMonth: HTMLElement,
         headDay: HTMLElement,
         reset: HTMLElement,
+        close: HTMLElement,
         prev: HTMLElement,
         next: HTMLElement,
-        days: HTMLCollectionOf<Element> | null,
-        hours: HTMLCollectionOf<Element> | null
-    } 
-    // wstawic loader zamiast null
+        days: HTMLCollectionOf<Element>,
+        hours: HTMLCollectionOf<Element>
+    }
+
     constructor() {
         this.state = {
             today: dayjs(),
@@ -57,9 +39,10 @@ export class CalendarWidget implements ICalendarWidget {
         this.renderCalendar()
         this.elements = {
             ...this.getHTMLElements(),
-            days: null,
-            hours: null,
+            days: this.getHTMLElementsCollection('days'),
+            hours: this.getHTMLElementsCollection('hours'),
         }
+
         this.startCalendar(this.state.currentMonth)
     }
 
@@ -78,7 +61,8 @@ export class CalendarWidget implements ICalendarWidget {
             const hoursTable = document.getElementById('hoursTable')
             if (hoursTable) hoursTable.remove()
             this.elements.header.appendChild(createHoursTable(this.state.monthObject[this.state.currentDate.date() - 1].periodsForMeeting))
-            this.getHTMLElementsCollection()
+            this.elements.days = this.getHTMLElementsCollection('days')
+            this.elements.hours = this.getHTMLElementsCollection('hours')
             this.addEventListeners()
             this.addEventListenersForHours()
         } catch (error) {
@@ -99,11 +83,12 @@ export class CalendarWidget implements ICalendarWidget {
         const header = document.getElementById('header')
         const headMonth = document.getElementById('headMonth')
         const headDay = document.getElementById('headDay')
-        const reset = document.getElementById('reset')
+        const reset = document.getElementById('resetBtn')
+        const close = document.getElementById('closeBtn')
         const prev = document.getElementById('prev')
         const next = document.getElementById('next')
 
-        if (!calendarBody || !header || !headMonth || !headDay || !reset || !prev || !next) {
+        if (!calendarBody || !header || !headMonth || !headDay || !reset || !close || !prev || !next) {
             throw Error('Sorry, something went wrong. Try to refresh the page.')
         }
         return {
@@ -112,20 +97,20 @@ export class CalendarWidget implements ICalendarWidget {
             headMonth,
             headDay,
             reset,
+            close,
             prev,
             next
         }
     }
 
-    getHTMLElementsCollection() {
-        ['days', 'hours'].forEach(el => {
-            this.elements[el] = document.getElementsByClassName(el)
-        })
+    getHTMLElementsCollection(el: string) {
+        const collection = document.getElementsByClassName(el)
+        return collection
     }
 
     navButtonHandler = (ev: Event) => {
         const button = ev.currentTarget as Element
-        if (!['prev', 'next', 'reset'].includes(button.id)) {
+        if (!['prev', 'next', 'resetBtn', 'closeBtn'].includes(button.id)) {
             throw Error('Sorry, something went wrong. Try to refresh the page.')
         }
         switch (button.id) {
@@ -133,8 +118,10 @@ export class CalendarWidget implements ICalendarWidget {
                 break;
             case 'next': this.state.currentMonth = this.state.currentMonth.add(1, 'month')
                 break;
-            case 'reset': this.state.currentMonth = dayjs();
+            case 'resetBtn': this.state.currentMonth = dayjs();
                 break;
+            case 'closeBtn': this.closeCalendar()
+                return
         }
         this.state.currentDate = dayjs().set('month', this.state.currentMonth.get('month'))
         this.removeEventsListeners()
@@ -174,6 +161,7 @@ export class CalendarWidget implements ICalendarWidget {
         this.elements.prev.addEventListener('click', this.navButtonHandler)
         this.elements.next.addEventListener('click', this.navButtonHandler)
         this.elements.reset.addEventListener('click', this.navButtonHandler)
+        this.elements.close.addEventListener('click', this.navButtonHandler)
         for (let i = 0; i < this.elements.days.length; i++) {
             if (!this.elements.days[i].classList.value.includes('disabled')) {
                 this.elements.days[i].addEventListener('click', this.dayButtonHandler)
@@ -185,6 +173,7 @@ export class CalendarWidget implements ICalendarWidget {
         if (this.elements.prev) this.elements.prev.removeEventListener('click', this.navButtonHandler)
         if (this.elements.next) this.elements.next.removeEventListener('click', this.navButtonHandler)
         if (this.elements.reset) this.elements.reset.removeEventListener('click', this.navButtonHandler)
+        if (this.elements.close) this.elements.close.removeEventListener('click', this.navButtonHandler)
         if (this.elements.days) {
             for (let i = 0; i < this.elements.days.length; i++) {
                 this.elements.days[i].removeEventListener('click', this.dayButtonHandler)
@@ -207,5 +196,12 @@ export class CalendarWidget implements ICalendarWidget {
                 this.elements.hours[i].removeEventListener('click', this.hourButtonHandler)
             }
         }
+    }
+
+    closeCalendar() {
+        this.removeEventListenersForHours()
+        this.removeEventsListeners()
+        const calendarWidget = document.getElementById('calendarWidget')
+        if (calendarWidget) calendarWidget.remove()
     }
 }

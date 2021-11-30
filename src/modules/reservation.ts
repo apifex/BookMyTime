@@ -3,8 +3,7 @@ import { sendEmail, addEventToCalendar } from "../api/api";
 import { reservationComponent } from "../components";
 import { IReservation } from "../types";
 import joi from 'joi'
-
-
+import { loaderComponent } from "../components/loader.component";
 
 export class Reservation implements IReservation {
     date: Dayjs
@@ -19,6 +18,7 @@ export class Reservation implements IReservation {
         subject: string,
         location: string
     }
+    loaderState: boolean
     elements: {
         reservationModal: HTMLElement,
         reservationForm: HTMLElement,
@@ -28,11 +28,10 @@ export class Reservation implements IReservation {
         inputEmail: HTMLInputElement,
         inputSubject: HTMLInputElement,
         alert: HTMLElement,
+        loader: HTMLElement | null
     }
-
-
+    
     constructor(day: Dayjs) {
-        console.log('constructor hha')
         this.date = day
         this.hour = day.format('HH:mm')
         this.day = day.format(`dddd, MMMM DD`)
@@ -42,11 +41,12 @@ export class Reservation implements IReservation {
         //TODO : add 'chose location'
         this.state = { name: '', email: '', subject: '', location: 'online' }
         document.body.append(reservationComponent(this.day, this.hour))
-        this.elements = this.getHTMLElements()
+        this.elements = {...this.getHTMLElements(), loader: null}
         this.addEventListeners()
+        this.loaderState = false
     }
 
-    getHTMLElements () {
+    getHTMLElements() {
         const reservationModal = document.getElementById('reservationModal')
         const reservationForm = document.getElementById('reservationForm')
         const confirmBtn = document.getElementById('confirmBtn')
@@ -85,6 +85,7 @@ export class Reservation implements IReservation {
     removeEventListeners() {
         if (this.elements.confirmBtn) this.elements.confirmBtn.removeEventListener('click', this.clickHandler)
         if (this.elements.cancelBtn) this.elements.cancelBtn.removeEventListener('click', this.clickHandler)
+        document.removeEventListener('keydown', this.keyboardHandler)
     }
 
     inputHandler = (ev: Event) => {
@@ -92,22 +93,37 @@ export class Reservation implements IReservation {
         const target = ev.currentTarget as HTMLInputElement
         this.state[target.name] = target.value
     }
-    
+
     clickHandler = (ev: MouseEvent) => {
+        if (this.loaderState) return
         ev.preventDefault()
         const target = ev.currentTarget as Element
-        console.log('target', target)
         if (target.id == 'confirmBtn') this.confirm()
-        if (target.id == 'cancelBtn') this.close()                                                                                                                                                                                                                                                                          
+        if (target.id == 'cancelBtn') this.close()
     }
+    
 
+    // TODO add preventDefault for Enter
     keyboardHandler = (ev: KeyboardEvent) => {
-        ev.preventDefault()
-        console.log('key press', ev.code)
+        if (this.loaderState) return
         if (ev.code == 'Escape') this.close()
         if (ev.code == 'Enter') this.confirm()
     }
+
+    loader = (state: boolean) => {
+        const loader = loaderComponent()
+        if (state) {
+            this.elements.loader = loader
+            this.elements.reservationModal.appendChild(loader)
+            this.loaderState = true
+        } else {
+            this.loaderState = false
+            if (this.elements.loader) this.elements.loader.remove()
+        }
+    }
+
     confirm = async () => {
+        this.loader(true)
         const formValidationSchema = joi.object({
             name: joi.string().alphanum().min(3).max(30).required(),
             email: joi.string().email({ minDomainSegments: 2, tlds: false }).required(),
@@ -130,12 +146,21 @@ export class Reservation implements IReservation {
                     location: this.state.location
                 })
                 if (sendEmailResponse === 'OK') {
-                    //TODO close
+                    this.loader(false)
                     this.alert('success')
-                } else { this.alert('error') }
-            } else { this.alert('error') }
+                    this.elements.confirmBtn.remove()
+                    this.elements.cancelBtn.innerText = 'Exit'
+                } else {
+                    this.loader(false)
+                    this.alert('error')
+                }
+            } else {
+                this.loader(false)
+                this.alert('error')
+            }
         } catch (error) {
             if (error instanceof Error) {
+                this.loader(false)
                 this.alert(error.message)
                 console.log('Error', error.message)
             }

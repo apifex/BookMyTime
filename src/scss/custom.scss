@@ -3,9 +3,14 @@
 @import "../../node_modules/bootstrap-icons/font/bootstrap-icons.css";
 
 $font-primary: "Lato", Arial, sans-serif;
-$primary: #3ae19b;
+$primary: #e13a9d;
 $black: black;
 $white: white;
+
+@keyframes openbox {
+    from{transform:scale(0);opacity:0}
+}
+  
 
 body {
     font-family: $font-primary;
@@ -55,6 +60,24 @@ h5,
 .ftco-no-pb {
     padding-bottom: 0;
 }
+
+.open-calendar-button {
+    // position: absolute;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 200px;
+    height: 200px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+    cursor: pointer;
+    background-image: url("https://f-droid.org/repo/com.simplemobiletools.calendar.pro/en-US/icon_B716bOJxyK28xpLqkebShllKASPFjHdZiRMjEe0oFxY=.png");
+    background-repeat: no-repeat;
+    background-size: 200px 200px;
+}
+
 //HEADING SECTION
 .heading-section {
     font-size: 28px;
@@ -69,6 +92,7 @@ h5,
 }
 
 .calendar {
+    animation: openbox 0.35s ease-in;
     max-width: 700px;
     text-align: center;
     position: relative;
@@ -95,7 +119,7 @@ h5,
         opacity: 0.5;
         z-index: -1;
     }
-    
+
     @media screen and (min-width: 767) {
         width: 100%;
         padding: 20px 0;
@@ -206,7 +230,7 @@ h5,
     width: 65%;
     background: $white;
     padding: 40px 20px 20px 20px;
-    @media screen and (min-width: 767)  {
+    @media screen and (min-width: 767) {
         width: 100%;
     }
 }
@@ -249,7 +273,7 @@ tbody td {
         border-radius: 50%;
         // @include transition(0.3s);
         z-index: -1;
-        @media screen and (min-width: 767)  {
+        @media screen and (min-width: 767) {
             width: 25px;
             height: 25px;
         }
@@ -307,7 +331,7 @@ tbody td:active {
     }
 }
 
-#reset {
+.resetBtn {
     display: block;
     position: absolute;
     right: 0.5em;
@@ -324,12 +348,40 @@ tbody td:active {
     font-size: 11px;
 }
 
-#reset:hover {
+.resetBtn:hover {
     color: $white;
     border-color: $white;
 }
 
-#reset:active {
+.resetBtn:active {
+    -webkit-transform: scale(0.8);
+    -ms-transform: scale(0.8);
+    transform: scale(0.8);
+}
+
+.closeBtn {
+    display: block;
+    position: absolute;
+    left: 0.5em;
+    top: 0.5em;
+    z-index: 999;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    padding: 0 0.5em;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 4px;
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    font-size: 11px;
+}
+
+.closeBtn:hover {
+    color: $white;
+    border-color: $white;
+}
+
+.closeBtn:active {
     -webkit-transform: scale(0.8);
     -ms-transform: scale(0.8);
     transform: scale(0.8);
@@ -350,6 +402,7 @@ tbody td:active {
 }
 
 .modal .container {
+    animation: openbox 0.35s ease-in;
     display: table-cell;
     text-align: center;
     vertical-align: middle;
@@ -366,4 +419,72 @@ tbody td:active {
 
 .btn {
     margin: 20px;
+}
+
+.loader {
+    display: block;
+    background: rgba(0, 0, 0, 0.199);
+    position: absolute;
+    border-radius: 15px;
+    top: 25vh;
+    left: 25vw;
+    margin: 0 auto;
+    width: 50vw;
+    height: 50vh;
+}
+
+.typing_loader {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    -webkit-animation: typing 1s linear infinite alternate;
+    -moz-animation: Typing 1s linear infinite alternate;
+    animation: typing 1s linear infinite alternate;
+    margin: 40% auto; /* Not necessary- its only for layouting*/
+    position: relative;
+    left: -12px;
+}
+@-webkit-keyframes typing {
+    0% {
+        background-color: rgba(255, 255, 255, 1);
+        box-shadow: 20px 0px 0px 0px rgba(255, 255, 255, 0.2), 40px 0px 0px 0px rgba(255, 255, 255, 0.2);
+    }
+    25% {
+        background-color: rgba(255, 255, 255, 0.4);
+        box-shadow: 20px 0px 0px 0px rgba(255, 255, 255, 2), 40px 0px 0px 0px rgba(255, 255, 255, 0.2);
+    }
+    75% {
+        background-color: rgba(255, 255, 255, 0.4);
+        box-shadow: 20px 0px 0px 0px rgba(255, 255, 255, 0.2), 40px 0px 0px 0px rgba(255, 255, 255, 1);
+    }
+}
+
+@-moz-keyframes typing {
+    0% {
+        background-color: rgba(255, 255, 255, 1);
+        box-shadow: 20px 0px 0px 0px rgba(255, 255, 255, 0.2), 40px 0px 0px 0px rgba(255, 255, 255, 0.2);
+    }
+    25% {
+        background-color: rgba(255, 255, 255, 0.4);
+        box-shadow: 20px 0px 0px 0px rgba(255, 255, 255, 2), 40px 0px 0px 0px rgba(255, 255, 255, 0.2);
+    }
+    75% {
+        background-color: rgba(255, 255, 255, 0.4);
+        box-shadow: 20px 0px 0px 0px rgba(255, 255, 255, 0.2), 40px 0px 0px 0px rgba(255, 255, 255, 1);
+    }
+}
+
+@keyframes typing {
+    0% {
+        background-color: rgba(255, 255, 255, 1);
+        box-shadow: 20px 0px 0px 0px rgba(255, 255, 255, 0.2), 40px 0px 0px 0px rgba(255, 255, 255, 0.2);
+    }
+    25% {
+        background-color: rgba(255, 255, 255, 0.4);
+        box-shadow: 20px 0px 0px 0px rgba(255, 255, 255, 2), 40px 0px 0px 0px rgba(255, 255, 255, 0.2);
+    }
+    75% {
+        background-color: rgba(255, 255, 255, 0.4);
+        box-shadow: 20px 0px 0px 0px rgba(255, 255, 255, 0.2), 40px 0px 0px 0px rgba(255, 255, 255, 1);
+    }
 }
