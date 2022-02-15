@@ -102,12 +102,13 @@ export class Reservation implements IReservation {
         if (target.id == 'cancelBtn') this.close()
     }
     
-
-    // TODO add preventDefault for Enter
     keyboardHandler = (ev: KeyboardEvent) => {
         if (this.loaderState) return
         if (ev.code == 'Escape') this.close()
-        if (ev.code == 'Enter') this.confirm()
+        if (ev.code == 'Enter') {
+            ev.preventDefault()
+            this.confirm()
+        }
     }
 
     loader = (state: boolean) => {
@@ -125,7 +126,7 @@ export class Reservation implements IReservation {
     confirm = async () => {
         this.loader(true)
         const formValidationSchema = joi.object({
-            name: joi.string().alphanum().min(3).max(30).required(),
+            name: joi.string().min(3).max(40).required(),
             email: joi.string().email({ minDomainSegments: 2, tlds: false }).required(),
             subject: joi.string().required()
         })

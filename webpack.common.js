@@ -1,6 +1,6 @@
 const path = require('path');
-
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 
 module.exports = {
     entry: {
@@ -11,13 +11,13 @@ module.exports = {
             {
                 test: /\.tsx?$/,
                 use: 'ts-loader',
-                exclude: /node_modules/
+                exclude: /node_modules/,
             },
         ],
     },
     plugins: [
         new HtmlWebpackPlugin({
-            title: "Book My Time"
+            title: "Book My Time",
         }),
     ],
     resolve: {

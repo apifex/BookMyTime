@@ -7,10 +7,14 @@ $primary: #e13a9d;
 $black: black;
 $white: white;
 
+$breakpoint-sm: 480px;
+$breakpoint-md: 767px;
+
+
+
 @keyframes openbox {
     from{transform:scale(0);opacity:0}
 }
-  
 
 body {
     font-family: $font-primary;
@@ -50,19 +54,7 @@ h5,
     background: $primary !important;
 }
 
-.ftco-section {
-    padding: 7em 0;
-}
-
-.ftco-no-pt {
-    padding-top: 0;
-}
-.ftco-no-pb {
-    padding-bottom: 0;
-}
-
 .open-calendar-button {
-    // position: absolute;
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -119,11 +111,20 @@ h5,
         opacity: 0.5;
         z-index: -1;
     }
+}
 
-    @media screen and (min-width: 767) {
+@media (max-width: $breakpoint-md) {
+    .wrap-header {
+        width: 80%;
+        padding: 20px 0;
+    }    
+}
+
+@media (max-width: $breakpoint-sm) {
+    .wrap-header {
         width: 100%;
         padding: 20px 0;
-    }
+    }    
 }
 
 #header {
@@ -139,7 +140,7 @@ h5,
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        font-size: 18px;
+        font-size: 2em;
         i {
             color: $white;
         }
@@ -156,7 +157,7 @@ h5,
 
 .button-wrap {
     position: relative;
-    padding: 10px 0;
+    // padding: 10px 0;
     .pre-button,
     .next-button {
         cursor: pointer;
@@ -165,8 +166,8 @@ h5,
         line-height: 1em;
         border-radius: 50%;
         position: absolute;
-        top: 0;
-        font-size: 18px;
+        bottom: 0;
+        font-size: 2em;
         i {
             color: lighten($black, 80%);
         }
@@ -192,6 +193,24 @@ h5,
     line-height: 1;
     color: #fff;
     font-size: 16px;
+    text-transform: uppercase;
+    font-weight: 300;
+}
+
+.head-body-month {
+    font-size: 1.5em;
+    // line-height: 1;
+    color: rgb(26, 25, 25);
+    // font-size: 16px;
+    text-transform: uppercase;
+    font-weight: 300;
+}
+
+.head-body-year {
+    font-size: 1em;
+    // line-height: 1;
+    color: rgb(26, 25, 25);
+    // font-size: 16px;
     text-transform: uppercase;
     font-weight: 300;
 }
@@ -229,11 +248,23 @@ h5,
 .calendar-wrap {
     width: 65%;
     background: $white;
-    padding: 40px 20px 20px 20px;
-    @media screen and (min-width: 767) {
-        width: 100%;
-    }
+    padding: 5px 20px 20px 20px;
 }
+
+@media (max-width: $breakpoint-md) {
+    .calendar-wrap {
+        width: 80%;
+    }    
+}
+
+@media (max-width: $breakpoint-sm) {
+    .calendar-wrap {
+        width: 100%;
+    }    
+}
+
+
+
 #calendarTable {
     width: 100%;
 }
@@ -273,10 +304,13 @@ tbody td {
         border-radius: 50%;
         // @include transition(0.3s);
         z-index: -1;
-        @media screen and (min-width: 767) {
-            width: 25px;
-            height: 25px;
-        }
+    }
+}
+
+@media (max-width: $breakpoint-sm) {
+    tbody td::after {
+        width: 28px;
+        height: 28px;
     }
 }
 

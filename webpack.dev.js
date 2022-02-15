@@ -10,18 +10,6 @@ module.exports = merge(common, {
                 use: [
                     'style-loader',
                     'css-loader',
-                    {
-                        loader: 'postcss-loader',
-                        options: {
-                            postcssOptions: {
-                                plugins: function () {
-                                    return [
-                                        require('autoprefixer')
-                                    ]
-                                }
-                            }
-                        }
-                    },
                     'sass-loader'
                 ],
             },

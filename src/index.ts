@@ -3,7 +3,6 @@ import './scss/custom.scss'
 import { CalendarWidget } from './modules/calendar'
 import { createElement } from './utils'
 
-
 //TODO 'env' with time zone and mail in config... 
 
 //div for test

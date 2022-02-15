@@ -29,7 +29,6 @@ function requestToApi(endpoint = "calendar/check", params = {}, requestData = {}
         })
         return data
     })
-
 }
 
 export const getCalendar = async (year: string, month: string): Promise<IMonthObject[] | undefined> =>
@@ -39,4 +38,4 @@ export const addEventToCalendar = async (startTime: string, endTime: string, sum
     await requestToApi('calendar/event', undefined, { startTime, endTime, summary, description, attendees }, 'POST')
 
 export const sendEmail = async (email: string, eventDetails: { guestName: string, start: string, end: string, summary: string, location: string }) =>
-    await requestToApi('email/send', undefined, { from: 'apifex@gmail.com', to: email, subject: 'Meeting with Apifex', eventDetails }, 'POST')
+    await requestToApi('email/send', undefined, { from: 'admin@apifex.pl', to: email, subject: `Meeting with Apifex`, eventDetails }, 'POST')

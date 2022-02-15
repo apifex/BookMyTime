@@ -9,6 +9,7 @@ import { createHoursTable, createDaysTable } from '../utils'
 
 import { IMonthObject, ICalendarWidget } from '../types'
 
+
 export class CalendarWidget implements ICalendarWidget {
     state: {
         today: Dayjs,
@@ -20,6 +21,8 @@ export class CalendarWidget implements ICalendarWidget {
         calendarBody: HTMLElement,
         header: HTMLElement,
         headMonth: HTMLElement,
+        headBodyMonth: HTMLElement,
+        headBodyYear: HTMLElement,
         headDay: HTMLElement,
         reset: HTMLElement,
         close: HTMLElement,
@@ -46,6 +49,8 @@ export class CalendarWidget implements ICalendarWidget {
         this.startCalendar(this.state.currentMonth)
     }
 
+    
+
     async startCalendar(date: Dayjs) {
         try {
             const monthObject = await getCalendar(date.get('year').toString(), date.get('month').toString())
@@ -57,6 +62,8 @@ export class CalendarWidget implements ICalendarWidget {
             if (calendarTable) calendarTable.remove()
             this.elements.calendarBody.appendChild(createDaysTable(this.state.monthObject))
             this.elements.headMonth.innerText = this.state.currentMonth.format('MMMM YYYY')
+            this.elements.headBodyYear.innerText = this.state.currentMonth.format('YYYY')
+            this.elements.headBodyMonth.innerText = this.state.currentMonth.format('MMMM')
             this.elements.headDay.innerText = this.state.currentDate.format('DD')
             const hoursTable = document.getElementById('hoursTable')
             if (hoursTable) hoursTable.remove()
@@ -82,19 +89,23 @@ export class CalendarWidget implements ICalendarWidget {
         const calendarBody = document.getElementById('calendarBody')
         const header = document.getElementById('header')
         const headMonth = document.getElementById('headMonth')
+        const headBodyMonth = document.getElementById('headBodyMonth')
+        const headBodyYear = document.getElementById('headBodyYear')
         const headDay = document.getElementById('headDay')
         const reset = document.getElementById('resetBtn')
         const close = document.getElementById('closeBtn')
         const prev = document.getElementById('prev')
         const next = document.getElementById('next')
 
-        if (!calendarBody || !header || !headMonth || !headDay || !reset || !close || !prev || !next) {
+        if (!calendarBody || !header || !headMonth || !headBodyMonth || !headBodyYear || !headDay || !reset || !close || !prev || !next) {
             throw Error('Sorry, something went wrong. Try to refresh the page.')
         }
         return {
             calendarBody,
             header,
             headMonth,
+            headBodyMonth,
+            headBodyYear,
             headDay,
             reset,
             close,
