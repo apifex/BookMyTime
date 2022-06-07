@@ -23,7 +23,7 @@ function requestToApi(endpoint = "calendar/check", params = {}, requestData = {}
     return errorHandler(async () => {
         const { data } = await axios({
             method,
-            url: `/api/${endpoint}`,
+            url: `https://bookmytime-express-api.herokuapp.com/api/${endpoint}`,
             params,
             data: requestData
         })
